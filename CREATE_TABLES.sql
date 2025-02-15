@@ -1,0 +1,41 @@
+USE TTOps;
+
+-- Inventory Table
+CREATE TABLE IF NOT EXISTS Inventory (
+    SKU INT AUTO_INCREMENT PRIMARY KEY,
+    ItemName VARCHAR(255) NOT NULL,
+    ItemDescription TEXT,
+    Price DECIMAL(10,2) NOT NULL,
+    QuantityInStock INT NOT NULL DEFAULT 0,
+    Supplier VARCHAR(255),
+    RestockThreshold INT DEFAULT 30,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Inventory Archive Table
+CREATE TABLE IF NOT EXISTS InventoryArchive (
+    ArchiveID INT AUTO_INCREMENT PRIMARY KEY,
+    SKU INT NOT NULL,
+    ItemName VARCHAR(255) NOT NULL,
+    ItemDescription TEXT,
+    SKU VARCHAR(255) UNIQUE NOT NULL,
+    ItemPrice DECIMAL(10,2) NOT NULL,
+    ItemQuantity INT NOT NULL,
+    Supplier VARCHAR(255),
+    CreatedAt TIMESTAMP NOT NULL,
+    FinalUpdateAt TIMESTAMP NOT NULL,
+    ArchivedDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Users Table
+CREATE TABLE IF NOT EXISTS Users (
+    UserID INT AUTO_INCREMENT PRIMARY KEY,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    PasswordHash VARCHAR(255) NOT NULL,
+    Role ENUM('Admin', 'Employee', 'Manager', 'Customer') NOT NULL DEFAULT 'Customer',
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    LastLogin TIMESTAMP NULL
+);
