@@ -14,12 +14,11 @@ CREATE TABLE IF NOT EXISTS Inventory (
 );
 
 -- Inventory Archive Table
-CREATE TABLE IF NOT EXISTS InventoryArchive (
+CREATE TABLE InventoryArchive (
     ArchiveID INT AUTO_INCREMENT PRIMARY KEY,
-    SKU INT NOT NULL,
+    SKUINT INT NOT NULL,
     ItemName VARCHAR(255) NOT NULL,
     ItemDescription TEXT,
-    SKU VARCHAR(255) UNIQUE NOT NULL,
     ItemPrice DECIMAL(10,2) NOT NULL,
     ItemQuantity INT NOT NULL,
     Supplier VARCHAR(255),
