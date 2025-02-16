@@ -38,3 +38,37 @@ CREATE TABLE IF NOT EXISTS Users (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     LastLogin TIMESTAMP NULL
 );
+
+-- Customers Table
+CREATE TABLE IF NOT EXISTS Customers (
+    CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) UNIQUE NOT NULL,
+    PhoneNumber VARCHAR(20),
+    ShippingAddress TEXT,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    isDeleted BOOLEAN DEFAULT FALSE
+);
+
+-- Orders Table
+CREATE TABLE IF NOT EXISTS Orders (
+    OrderID INT AUTO_INCREMENT PRIMARY KEY,
+    CustomerID INT NOT NULL,
+    OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    TotalPrice DECIMAL(10,2) NOT NULL,
+    OrderStatus ENUM('Pending', 'Shipped', 'Delivered', 'Cancelled') NOT NULL,
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE
+);
+
+-- Orders Archive Table
+CREATE TABLE IF NOT EXISTS OrdersArchive (
+    ArchiveID INT AUTO_INCREMENT PRIMARY KEY,
+    OrderID INT NOT NULL,
+    CustomerID INT NOT NULL,
+    OrderDate DATETIME NOT NULL,
+    TotalPrice DECIMAL(10,2) NOT NULL,
+    OrderStatus ENUM('Cancelled', 'Deleted', 'Completed') NOT NULL,
+    ArchivedDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ArchivedReason TEXT,
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE
