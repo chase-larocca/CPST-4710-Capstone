@@ -41,11 +41,11 @@ def order_status():
     return render_template("OrderStatusPage.html")
 
 @app.route('/account-change')
-def account():
+def account_change():
     return render_template('Account_Change_Information_Page.html')
 
 @app.route('/account-singup')
-def account():
+def account_signup():
     return render_template('Account_Signup_Page.html')
 
 # Flask route to return inventory as JSON
