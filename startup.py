@@ -2,7 +2,6 @@ import mysql.connector
 from mysql.connector import Error
 from flask import Flask, jsonify
 
-
 # Connects to local MySQL database
 def connect_to_mysql():
     try: 
@@ -25,13 +24,22 @@ from flask import Flask, render_template
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
-@app.route("/")
+@app.route('/')
 def home():
-    return render_template("ProductPage.html")
+    return render_template('ProductPage.html')  
+
+@app.route('/product')
+def product_page():
+    return render_template('ProductPage.html')
 
 @app.route("/cart")
 def cart():
-    return render_template("CartPage.html")
+    return render_template("Checkout_Cart_Page.html")
+
+@app.route("/order-status")
+def order_status():
+    return render_template("OrderStatusPage.html")
+
 
 # Flask route to return inventory as JSON
 @app.route("/api/products", methods=["GET"])

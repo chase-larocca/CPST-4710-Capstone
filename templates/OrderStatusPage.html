@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Status</title>
+
+  <!-- Load CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/OrderStatusStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="page-header">
+    <img src="https://placehold.co/150x150" alt="South Balance Logo" class="logo" />
+    <h1 class="page-title">Order Status</h1>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-bar">
+    <a class="nav-item" href="/product">Products Page</a>
+    <a class="nav-item" href="/cart">Cart</a>
+    <a class="nav-item" href="/order-status">Order Status</a>
+    <a class="nav-item" href="#">My Account</a>
+    <a class="nav-item" href="#">Log Out</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="order-status-container">
+        <table class="order-table">
+            <thead>
+              <tr>
+                <th>Order Number</th>
+                <th>Shipping Destination</th>
+                <th>Number of Items</th>
+                <th>Order Status</th>
+              </tr>
+            </thead>
+            <tbody id="order-status-body">
+              <!-- Will be populated dynamically or hardcoded for now -->
+            </tbody>
+          </table>
+    </div>
+    
+
+    <div class="order-help">
+      <p>Any question about your orders?</p>
+      <p>Contact us: <a href="mailto:order.support@southbalance.com">order.support@southbalance.com</a></p>
+    </div>
+
+  </div>
+
+</body>
+</html>
