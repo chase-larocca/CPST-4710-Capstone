@@ -21,14 +21,17 @@ def connect_to_mysql():
 
 app = Flask(__name__)
 
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, render_template
 
-app = Flask(__name__, static_url_path='', static_folder='.')
+app = Flask(__name__, static_folder='static', template_folder='templates')
 
-# Serve the ProductPage.html
-@app.route('/')
-def serve_product_page():
-    return send_from_directory('.', 'ProductPage.html')
+@app.route("/")
+def home():
+    return render_template("ProductPage.html")
+
+@app.route("/cart")
+def cart():
+    return render_template("CartPage.html")
 
 # Flask route to return inventory as JSON
 @app.route("/api/products", methods=["GET"])
@@ -40,39 +43,19 @@ def get_inventory_items():
     try:
         cursor = connection.cursor(dictionary=True)
         cursor.callproc("sp_InventoryWithColors")
-
-        rows = []
+        results = []
         for result in cursor.stored_results():
-            rows = result.fetchall()
-
-        # Group rows by SKU and collect colors
-        products = {}
-        for row in rows:
-            sku = row["SKU"]
-            if sku not in products:
-                products[sku] = {
-                    "SKU": sku,
-                    "ItemName": row["ItemName"],
-                    "ItemDescription": row["ItemDescription"],
-                    "Price": float(row["Price"]),
-                    "QuantityInStock": row["QuantityInStock"],
-                    "Supplier": row["Supplier"],
-                    "RestockThreshold": row["RestockThreshold"],
-                    "CreatedAt": row["CreatedAt"].isoformat() if row["CreatedAt"] else None,
-                    "UpdatedAt": row["UpdatedAt"].isoformat() if row["UpdatedAt"] else None,
-                    "Colors": []
-                }
-            if row["ColorName"]:
-                products[sku]["Colors"].append(row["ColorName"])
-
-        return jsonify(list(products.values()))
-    
+            for row in result.fetchall():
+                row['Colors'] = [row['ColorName']] if row['ColorName'] else []
+                del row['ColorName']
+                results.append(row)
+        return jsonify(results)
     except Error as e:
-        print(f"Error: {e}")
         return jsonify({"error": "Failed to read inventory"}), 500
     finally:
         cursor.close()
         connection.close()
+
 
 
 if __name__ == "__main__":

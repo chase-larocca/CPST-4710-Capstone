@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Products</title>
+<!-- Load CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/ProductPageStyles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+
+<!-- Load JS -->
+<script src="{{ url_for('static', filename='js/products.js') }}"></script>
+
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="page-header">
+    <img src="https://placehold.co/150x150" alt="South Balance Logo" class="logo" />
+    <h1 class="page-title">Products</h1>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-bar">
+    <a class="nav-item" href="ProductPage.html">Products Page</a>
+    <a class="nav-item" href="CartPage.html">Cart</a>
+    <a class="nav-item" href="#">Order Status</a>
+    <a class="nav-item" href="#">My Account</a>
+    <a class="nav-item" href="#">Log Out</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    
+    <div class="customization-info">
+      <h2>Military Branch Customizations</h2>
+      <p>Customizations: A $5 charge for each item with a military branch customization and a $2 charge for each item with a patriotic customization will be added at checkout</p>
+    </div>
+    
+
+    <!-- Military Icons -->
+    <div class="military-icons">
+      <img src="https://placehold.co/60x60?text=AF" alt="Air Force" />
+      <img src="https://placehold.co/60x60?text=Marines" alt="Marines" />
+      <img src="https://placehold.co/60x60?text=Army" alt="Army" />
+      <img src="https://placehold.co/60x60?text=Coast+Guard" alt="Coast Guard" />
+      <img src="https://placehold.co/60x60?text=Space+Force" alt="Space Force" />
+      <img src="https://placehold.co/60x60?text=Nat+Guard" alt="National Guard" />
+      <img src="https://placehold.co/60x60?text=Navy" alt="Navy" />
+      <img src="https://placehold.co/60x60?text=Patriotic" alt="Patriotic" />
+    </div>
+
+    <!-- Product Grid (Populated by JavaScript) -->
+    <div class="product-grid">
+    </div>
+
+  </div>
+
+  <!-- JS to fetch inventory from Flask -->
+  
+<script>
+ 
+</script>
+
+</body>
+</html>
+
