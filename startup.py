@@ -40,6 +40,13 @@ def cart():
 def order_status():
     return render_template("OrderStatusPage.html")
 
+@app.route('/account')
+def account():
+    return render_template('Account_Change_Information_Page.html')
+
+@app.route('/account')
+def account():
+    return render_template('Account_Signup_Page.html')
 
 # Flask route to return inventory as JSON
 @app.route("/api/products", methods=["GET"])
