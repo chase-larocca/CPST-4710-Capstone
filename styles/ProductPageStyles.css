@@ -16,14 +16,15 @@
 }
 
 .nav-item {
-  color: var(--card-bg);
+  font-weight: 700;         /* Bold */
   font-size: 20px;
-  font-weight: 500;
-  cursor: pointer;
+  color: var(--card-bg);
   padding: 8px 16px;
   border-radius: 4px;
+  cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
 
 .nav-item:hover {
   background-color: rgba(255, 255, 255, 0.1);
@@ -33,17 +34,28 @@
   padding: 20px 40px;
 }
 
+.customization-info {
+  background-color: #f2f9f6;
+  border-left: 6px solid #21543F;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
 .customization-info h2 {
-  font-size: 28px;
-  margin: 0;
-  color: var(--text-color);
+  font-size: 24px;
+  color: #21543F;
+  margin: 0 0 8px 0;
 }
 
 .customization-info p {
-  margin-top: 5px;
   font-size: 14px;
   color: #333;
+  line-height: 1.5;
+  margin: 0;
 }
+
 
 .military-icons {
   display: flex;
@@ -71,17 +83,20 @@
 }
 
 .product-card {
+  width: 350px;               
+  height: 120px;            
+  overflow: hidden;        
   display: flex;
+  flex-direction: row;
   align-items: center;
+  gap: 12px;
+  padding: 12px;
   background: var(--card-bg);
   border-radius: 8px;
-  padding: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  gap: 12px;
-  width: 350px;
-  height: 120px;
   box-sizing: border-box;
 }
+
 
 .product-image {
   width: 80px;
@@ -156,6 +171,22 @@
   transition: background-color 0.3s ease;
 }
 
-.add-to-cart button:hover {
-  background-color: #1a4534;
+.add-to-cart-btn {
+  background-color: #21543F;      /* Matches navbar */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;                    /* Optional: full-width button */
+  margin-top: 6px;
 }
+
+.add-to-cart-btn:hover {
+  background-color: #1a4534;      /* Slightly darker on hover */
+}
+
+

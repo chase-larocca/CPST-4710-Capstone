@@ -20,4 +20,9 @@
   input, textarea, select {
     user-select: text;
   }
+
+  a {
+    text-decoration: none;
+  }
+  
   

@@ -2,37 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Products</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/GlobalStyles.css" />
   <link rel="stylesheet" href="styles/ProductPageStyles.css" />
-  <link rel="stylesheet" href="styles/GlobalStyles.css">
-  <link rel="stylesheet" href="styles/HeaderStyles.css">
-
-
+  <link rel="stylesheet" href="styles/HeaderStyles.css" />
+  <script src="js/products.js"></script>
 </head>
 <body>
-  <header class="page-header">
-    <img src="https://placehold.co/250x232" alt="Logo" class="logo" />
+
+  <!-- Header -->
+  <div class="page-header">
+    <img src="https://placehold.co/150x150" alt="South Balance Logo" class="logo" />
     <h1 class="page-title">Products</h1>
-  </header>
+  </div>
 
-  <nav class="nav-bar">
-    <div class="nav-item">Products Page</div>
-    <div class="nav-item">Cart</div>
-    <div class="nav-item">Order Status</div>
-    <div class="nav-item">My Account</div>
-    <div class="nav-item">Log Out</div>
-  </nav>
+  <!-- Navigation -->
+  <div class="nav-bar">
+    <a class="nav-item" href="ProductPage.html">Products Page</a>
+    <a class="nav-item" href="CartPage.html">Cart</a>
+    <a class="nav-item" href="#">Order Status</a>
+    <a class="nav-item" href="#">My Account</a>
+    <a class="nav-item" href="#">Log Out</a>
+  </div>
 
-  <main class="main-content">
-    <section class="customization-info">
+  <!-- Main Content -->
+  <div class="main-content">
+    
+    <div class="customization-info">
       <h2>Military Branch Customizations</h2>
       <p>Customizations: A $5 charge for each item with a military branch customization and a $2 charge for each item with a patriotic customization will be added at checkout</p>
-    </section>
+    </div>
+    
 
-<!-- ICONS FOR PRODUCT CUSTOMIZATION -->
-    <section class="military-icons">
+    <!-- Military Icons -->
+    <div class="military-icons">
       <img src="https://placehold.co/60x60?text=AF" alt="Air Force" />
       <img src="https://placehold.co/60x60?text=Marines" alt="Marines" />
       <img src="https://placehold.co/60x60?text=Army" alt="Army" />
@@ -41,296 +45,20 @@
       <img src="https://placehold.co/60x60?text=Nat+Guard" alt="National Guard" />
       <img src="https://placehold.co/60x60?text=Navy" alt="Navy" />
       <img src="https://placehold.co/60x60?text=Patriotic" alt="Patriotic" />
-    </section>
-
-    <section class="product-grid">
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-      
-
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-
-
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-
-      <div class="product-card">
-        <!-- Left: Product image -->
-        <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
-      
-        <!-- Right: Product details -->
-        <div class="product-details">
-          
-          <!-- Title and Price -->
-          <div class="product-title-price">
-            <span class="product-name">Stainless Steel Bottle</span>
-            <span class="separator">|</span>
-            <span class="product-price">$24.99</span>
-          </div>
-      
-          <!-- Customization row -->
-          <div class="customization-row">
-            <select>
-              <option>Color</option>
-            </select>
-            <select>
-              <option>Customize</option>
-            </select>
-            <input type="number" min="0" placeholder="QTY" class="qty-field" />
-          </div>
-      
-        </div>
-      </div>
-      
-
-    </section>
-
-    <div class="add-to-cart">
-      <button>Add to Cart</button>
     </div>
-  </main>
+
+    <!-- Product Grid (Populated by JavaScript) -->
+    <div class="product-grid">
+    </div>
+
+  </div>
+
+  <!-- JS to fetch inventory from Flask -->
+  
+<script>
+ 
+</script>
+
 </body>
 </html>
+
