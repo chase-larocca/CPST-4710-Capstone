@@ -1,10 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Blueprint
-from Python.Order_SP_Handler import order_blueprint
-import random
-import string
-
+from Python.Order_SP_Handler import order_blueprint  
 
 app = Flask(__name__)
 
