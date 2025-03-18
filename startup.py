@@ -78,15 +78,40 @@ def cart():
 def order_status():
     return render_template("OrderStatusPage.html")
 
-# Account Change Page
-@app.route('/account-change')
-def account_change():
+@app.route('/account', methods=["GET", "POST"])
+def account():
+    if request.method == "POST":
+        username = request.form.get("username")
+        email = request.form.get("email")
+        new_password = request.form.get("new-password")
+        confirm_password = request.form.get("confirm-password")
+
+        if new_password and new_password != confirm_password:
+            flash("The entered passwords do not match. Please try again.", "error")
+            return redirect(url_for('account'))
+
+        connection = connect_to_mysql()
+        if connection:
+            cursor = connection.cursor()
+
+            # Ensure username and email are unique (except for the current user)
+            cursor.execute("SELECT * FROM Users WHERE (username=%s OR email=%s) AND id!=%s", 
+                           (username, email, 1))  # Replace `1` with the session user ID
+            existing_user = cursor.fetchone()
+
+            if existing_user:
+                flash("Username or email is already in use.", "error")
+            else:
+                update_query = "UPDATE Users SET username=%s, email=%s, password=%s WHERE id=%s"
+                cursor.execute(update_query, (username, email, new_password, 1))  # Replace `1` with session user ID
+                connection.commit()
+                flash("Account updated successfully!", "success")
+
+            connection.close()
+
     return render_template('Account_Change_Information_Page.html')
 
-# Account Signup Page
-@app.route('/account-signup')
-def account_signup():
-    return render_template('Account_Signup_Page.html')
+
 
 # Flask route to return inventory as JSON
 @app.route("/api/products", methods=["GET"])
