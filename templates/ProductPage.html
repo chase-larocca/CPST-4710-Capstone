@@ -4,22 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Products</title>
-<!-- Load CSS -->
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/ProductPageStyles.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/ProductPageStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
 
 </head>
 
 <body>
 
-  <!-- Header -->
+
   <div class="page-header">
     <img src="{{ url_for('static', filename='images/SouthBalanceLogo.png') }}" alt="South Balance Logo" class="logo" />
     <h1 class="page-title">Products</h1>
   </div>
 
-  <!-- Navigation -->
+ 
   <div class="nav-bar">
     <a class="nav-item" href="/product">Products Page</a>
     <a class="nav-item" href="/cart">Cart</a>
@@ -28,7 +28,7 @@
     <a class="nav-item" href="/">Log Out</a>
   </div>
 
-  <!-- Main Content -->
+
   <div class="main-content">
     
     <div class="customization-info">
@@ -37,7 +37,7 @@
     </div>
     
 
-    <!-- Military Icons -->
+  
     <div class="military-icons">
       <img src="https://placehold.co/60x60?text=AF" alt="Air Force" />
       <img src="https://placehold.co/60x60?text=Marines" alt="Marines" />
@@ -49,19 +49,14 @@
       <img src="https://placehold.co/60x60?text=Patriotic" alt="Patriotic" />
     </div>
 
-    <!-- Product Grid (Populated by JavaScript) -->
+    
     <div class="product-grid">
     </div>
 
   </div>
 
-  <!-- JS to fetch inventory from Flask -->
-  
-<script>
- 
-</script>
+  <!--JS -->
 
-<!-- Load JS -->
 <script src="{{ url_for('static', filename='js/products.js') }}"></script>
 
 </body>

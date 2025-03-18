@@ -34,10 +34,19 @@ def home():
 # Sign-In Page (Shows login form, clicking "Sign In" redirects to product page)
 @app.route('/login', methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
-        return redirect(url_for('product_page')) 
-    
-    return render_template('SignIn_Page.html')  
+    #username = request.form.get('username')
+    #password = request.form.get('password') 
+
+    login_type = request.form.get('login_type')
+
+    if login_type == "inventory":
+        # Route to inventory management portal
+        return redirect(url_for('inventory_login'))  
+    elif login_type == "customer":
+        return redirect(url_for('product_page'))  
+    else:
+        return render_template('SignIn_Page.html')
+
 
 # Signup Page
 @app.route('/signup', methods=["GET", "POST"])
@@ -116,6 +125,7 @@ def account():
             connection.close()
 
     return render_template('Account_Change_Information_Page.html')
+
 
 # Flask route to return inventory as JSON
 @app.route("/api/products", methods=["GET"])

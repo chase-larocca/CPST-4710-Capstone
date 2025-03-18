@@ -63,7 +63,7 @@
 
         .inventory-login-btn {
             display: block;
-            margin: 20px auto 0 auto; /* top auto bottom auto to center */
+            margin: 20px auto 0 auto; 
             padding: 10px 20px;
             background-color: var(--primary-green);
             color: white;
@@ -72,6 +72,14 @@
             font-size: 18px;
             cursor: pointer;
         }
+
+        .button-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
 
 
     </style>
@@ -102,15 +110,12 @@
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" placeholder="********" required>
                 </div>
-                <div class="button-container">
-                    <button type="submit" class="signin-btn">Customer Sign In</button>
+                <div class="button-container button-stack">
+                    <button type="submit" name="login_type" value="customer" class="signin-btn">Customer Sign In</button>
+                    <button type="submit" name="login_type" value="inventory" class="signin-btn">Inventory Management Login</button>
                 </div>
-            </form>
 
-            <form action="/inventory_login" method="get" style="margin-top: 10px;">
-                <button type="submit" class="inventory-login-btn">Inventory Management Login</button>
             </form>
-
         </div>
 
         

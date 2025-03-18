@@ -60,8 +60,7 @@ document.addEventListener('click', function (event) {
         alert("Please enter a valid quantity.");
         return;
       }
-  
-  
+
       const item = {
         name,
         price,
