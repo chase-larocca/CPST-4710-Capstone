@@ -40,7 +40,7 @@ def login():
     return render_template('SignIn_Page.html')  
 
 # Signup Page
-@app.route('/signup', methods=["GET", "POST"])
+'''@app.route('/signup', methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         username = request.form['username']
@@ -62,7 +62,7 @@ def signup():
 
             connection.close()
 
-    return render_template('Account_Signup_Page.html')
+    return render_template('Account_Signup_Page.html')'''
 
 # Product Page
 @app.route('/product')
@@ -112,6 +112,41 @@ def account():
 
     return render_template('Account_Change_Information_Page.html')
 
+@app.route('/signup', methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        print(request.form)  # Debugging: See what data is being received
+        
+        if "first_name" not in request.form:
+            flash("First Name is missing!", "error")
+            return redirect(url_for('signup'))
+
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        email = request.form['email']
+        password = request.form['password']
+
+        connection = connect_to_mysql()
+        if connection:
+            cursor = connection.cursor()
+            
+            # Check if user already exists
+            cursor.execute("SELECT * FROM Users WHERE Email=%s", (email,))
+            existing_user = cursor.fetchone()
+
+            if existing_user:
+                flash("Email already exists!", "error")
+            else:
+                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+                cursor.execute("INSERT INTO Users (FirstName, LastName, Email, PasswordHash) VALUES (%s, %s, %s, %s)",
+                               (first_name, last_name, email, hashed_password))
+                connection.commit()
+                flash("Account created successfully!", "success")
+                return redirect(url_for('login'))
+
+            connection.close()
+
+    return render_template('Account_Signup_Page.html')
 
 
 # Flask route to return inventory as JSON
@@ -154,57 +189,6 @@ def get_orders():
     finally:
         cursor.close()
         connection.close()
-
-@app.route("/api/cart", methods=["GET"])
-def get_cart():
-    connection = connect_to_mysql()
-    if not connection:
-        return jsonify({"error": "Database connection failed"}), 500
-
-    try:
-        cursor = connection.cursor(dictionary=True)
-        cursor.execute("""
-            SELECT i.SKU, i.ItemName, ic.ColorName AS Color, 
-                   o.Quantity, i.Price, o.Customization
-            FROM Orders o
-            JOIN Inventory i ON o.SKU = i.SKU
-            LEFT JOIN InventoryColors ic ON o.SKU = ic.SKU
-            WHERE o.OrderStatus = 'Pending'
-        """)
-        cart_items = cursor.fetchall()
-        
-        # Format response
-        for item in cart_items:
-            customization_charge = 5 if item["Customization"] and item["Customization"] != "None" else 0
-            if item["Customization"] == "Patriotic":
-                customization_charge = 2
-            item["TotalPrice"] = round((item["Price"] + customization_charge) * item["Quantity"], 2)
-
-        return jsonify(cart_items)
-
-    except Error as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        cursor.close()
-        connection.close()
-
-@app.route("/api/cart/remove/<int:sku>", methods=["DELETE"])
-def remove_from_cart(sku):
-    connection = connect_to_mysql()
-    if not connection:
-        return jsonify({"error": "Database connection failed"}), 500
-
-    try:
-        cursor = connection.cursor()
-        cursor.execute("DELETE FROM Orders WHERE SKU = %s AND OrderStatus = 'Pending'", (sku,))
-        connection.commit()
-        return jsonify({"success": True})
-    except Error as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        cursor.close()
-        connection.close()
-
 
 if __name__ == "__main__":
     app.run(debug=True)
