@@ -9,7 +9,10 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/OrderStatusStyles.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+
+  <script src="{{ url_for('static', filename='js/orderstatus.js') }}"></script>
 </head>
+
 
 <body>
 
@@ -40,9 +43,11 @@
                 <th>Order Status</th>
               </tr>
             </thead>
-            <tbody id="order-status-body">
-              <!-- Will be populated dynamically or hardcoded for now -->
+            <tbody id="order-table-body">
+              <!-- Data will be injected here by JS -->
             </tbody>
+          </table>
+          
           </table>
     </div>
     

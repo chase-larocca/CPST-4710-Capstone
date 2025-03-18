@@ -49,4 +49,18 @@ BEGIN
     UPDATE Orders SET OrderStatus = 'Cancelled' WHERE OrderID = p_OrderID;
 END //
 
+DELIMITER //
+
+CREATE PROCEDURE sp_GetOrderStatuses()
+BEGIN
+    SELECT 
+        OrderNumber,
+        ShippingDestination,
+        NumberOfItems,
+        OrderStatus
+    FROM Orders
+    ORDER BY OrderDate DESC;
+END //
+
+
 DELIMITER ;

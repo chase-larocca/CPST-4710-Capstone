@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Inventory (
 
 -- Inventory Archive Table
 -- USE TTOps;
-CREATE TABLE InventoryArchive (
+CREATE TABLE IF NOT EXISTS InventoryArchive (
     ArchiveID INT AUTO_INCREMENT PRIMARY KEY,
     SKUINT INT NOT NULL,
     ItemName VARCHAR(255) NOT NULL,
@@ -59,10 +59,13 @@ CREATE TABLE IF NOT EXISTS Customers (
 -- USE TTOps;
 CREATE TABLE IF NOT EXISTS Orders (
     OrderID INT AUTO_INCREMENT PRIMARY KEY,
+    OrderNumber VARCHAR(20) NOT NULL UNIQUE, 
     CustomerID INT NOT NULL,
-    OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ShippingDestination VARCHAR(255) NOT NULL, 
+    NumberOfItems INT NOT NULL, 
     TotalPrice DECIMAL(10,2) NOT NULL,
     OrderStatus ENUM('Pending', 'Shipped', 'Delivered', 'Cancelled') NOT NULL,
+    OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE
 );
 
@@ -71,7 +74,10 @@ CREATE TABLE IF NOT EXISTS Orders (
 CREATE TABLE IF NOT EXISTS OrdersArchive (
     ArchiveID INT AUTO_INCREMENT PRIMARY KEY,
     OrderID INT NOT NULL,
+    OrderNumber VARCHAR(20),
     CustomerID INT NOT NULL,
+    ShippingDestination VARCHAR(255),
+    NumberOfItems INT,
     OrderDate DATETIME NOT NULL,
     TotalPrice DECIMAL(10,2) NOT NULL,
     OrderStatus ENUM('Cancelled', 'Deleted', 'Completed') NOT NULL,
@@ -80,14 +86,17 @@ CREATE TABLE IF NOT EXISTS OrdersArchive (
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE
 );
 
+
 -- Inventory Colors Table
-USE TTOps;
-CREATE TABLE InventoryColors (
+-- USE TTOps;
+CREATE TABLE IF NOT EXISTS InventoryColors (
     ColorID INT AUTO_INCREMENT PRIMARY KEY,
     SKU VARCHAR(50) NOT NULL,
     ColorName VARCHAR(50) NOT NULL,
     FOREIGN KEY (SKU) REFERENCES Inventory(SKU)
 );
+
+
 
 
 

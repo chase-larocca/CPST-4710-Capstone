@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
+from flask import Blueprint, jsonify
 
 # Connects to local MySQL database
 def connect_to_mysql():
@@ -45,18 +46,28 @@ def update_order(connection, order_id, total_price, order_status):
         cursor.close()
 
 # Calls stored procedure to retrieve an order by ID
-def get_order_by_id(connection, order_id):
+
+order_blueprint = Blueprint('order_routes', __name__)
+
+@order_blueprint.route("/api/orders", methods=["GET"])
+def get_orders():
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
     try:
-        cursor = connection.cursor()
-        cursor.callproc('sp_getOrderByID', (order_id,))
-        order = None
+        cursor = connection.cursor(dictionary=True)
+        cursor.callproc("sp_GetOrderStatuses")
+        orders = []
         for result in cursor.stored_results():
-            order = result.fetchone()
-        return order
-    except Error as e:
-        print(f"Error: {e}")
+            orders = result.fetchall()
+        return jsonify(orders)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
+        connection.close()
+
 
 # Calls stored procedure to cancel an order
 def cancel_order(connection, order_id):

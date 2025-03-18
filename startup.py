@@ -1,6 +1,13 @@
 import mysql.connector
 from mysql.connector import Error
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Blueprint
+from Python.Order_SP_Handler import order_blueprint  
+
+app = Flask(__name__)
+
+app = Flask(__name__, static_folder='static', template_folder='templates')
+
+app.register_blueprint(order_blueprint)
 
 # Connects to local MySQL database
 def connect_to_mysql():
@@ -17,12 +24,6 @@ def connect_to_mysql():
     except Error as e:
         print(f"Error: {e}")
         return None
-
-app = Flask(__name__)
-
-from flask import Flask, render_template
-
-app = Flask(__name__, static_folder='static', template_folder='templates')
 
 
 # Home Page (starting page)
@@ -110,6 +111,25 @@ def get_inventory_items():
     finally:
         cursor.close()
         connection.close()
+
+def get_orders():
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.callproc("sp_GetOrderStatuses")
+        orders = []
+        for result in cursor.stored_results():
+            orders = result.fetchall()
+        return jsonify(orders)
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
 
 if __name__ == "__main__":
     app.run(debug=True)
