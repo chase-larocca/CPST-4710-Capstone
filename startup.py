@@ -1,6 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
-from flask import Flask, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 
 # Connects to local MySQL database
 def connect_to_mysql():
@@ -24,27 +24,67 @@ from flask import Flask, render_template
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 
+
+# Home Page (starting page)
 @app.route('/')
 def home():
-    return render_template('ProductPage.html')  
+    return render_template('HomePage.html')
 
+# Sign-In Page (Shows login form, clicking "Sign In" redirects to product page)
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        return redirect(url_for('product_page')) 
+    
+    return render_template('SignIn_Page.html')  
+
+# Signup Page
+@app.route('/signup', methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+
+        connection = connect_to_mysql()
+        if connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM Users WHERE username=%s OR email=%s", (username, email))
+            existing_user = cursor.fetchone()
+
+            if existing_user:
+                flash("Username or email already exists!", "error")
+            else:
+                cursor.execute("INSERT INTO Users (username, email, password) VALUES (%s, %s, %s)", (username, email, password))
+                connection.commit()
+                flash("Account created successfully!", "success")
+
+            connection.close()
+
+    return render_template('Account_Signup_Page.html')
+
+# Product Page
 @app.route('/product')
 def product_page():
     return render_template('ProductPage.html')
 
+# Cart Page
 @app.route("/cart")
 def cart():
     return render_template("Checkout_Cart_Page.html")
 
+# Order Status Page
 @app.route("/order-status")
 def order_status():
     return render_template("OrderStatusPage.html")
 
+# Account Change Page
 @app.route('/account-change')
 def account_change():
     return render_template('Account_Change_Information_Page.html')
 
-@app.route('/account-singup')
+# Account Signup Page
+@app.route('/account-signup')
 def account_signup():
     return render_template('Account_Signup_Page.html')
 
@@ -70,8 +110,6 @@ def get_inventory_items():
     finally:
         cursor.close()
         connection.close()
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)

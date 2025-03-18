@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
+    <title>Sign In</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/SignupStyles.css') }}">
-    <script src="{{ url_for('static', filename='js/form-validation.js') }}" defer></script> 
     <style>
-        .signup-container {
+        body {
+            background-color: var(--page-bg);
+        }
+        .signin-container {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 80vh;
         }
-        .signup-content {
+        .signin-content {
             background: var(--card-bg);
             padding: 20px;
             border-radius: 10px;
@@ -43,7 +45,7 @@
             justify-content: flex-end;
             margin-top: 15px;
         }
-        .signup-btn {
+        .signin-btn {
             background-color: var(--primary-green);
             color: white;
             font-size: 18px;
@@ -52,49 +54,38 @@
             border: none;
             cursor: pointer;
         }
-        .signup-btn:hover {
+        .signin-btn:hover {
             background-color: #1a4534;
-        }
-        .error {
-            color: red;
-            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <header class="page-header">
-        <img src="https://placehold.co/250x232" alt="Logo" class="logo">
-        <h1 class="page-title">Please Sign Up for Your Account</h1>
+        <img src="https://placehold.co/150x150" alt="Logo" class="logo">
+        <h1 class="page-title">Please Sign In to Access Your Account</h1>
     </header>
 
     <nav class="nav-bar">
-        <a href="{{ url_for('login') }}" class="nav-item">Already have an account? Login</a>
+        <a href="{{ url_for('signup') }}" class="nav-item">Create Account</a>
+        <a href="#" class="nav-item">Forgot Password</a>
     </nav>
 
-    <main class="signup-container">
-        <div class="signup-content">
+    <main class="signin-container">
+        <div class="signin-content">
             {% if error %}
                 <p class="error">{{ error }}</p>
             {% endif %}
-            <form action="/signup" method="post" id="signup-form">
+            <form action="{{ url_for('login') }}" method="post">
                 <div class="form-group">
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" placeholder="Enter New Username" required>
+                    <input type="text" id="username" name="username" placeholder="Enter Username" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Enter New Email" required>
-                </div>
-                <div class="form-group">
-                    <label for="new-password">New Password:</label>
-                    <input type="password" id="new-password" name="password" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirm-password">Confirm Password:</label>
-                    <input type="password" id="confirm-password" name="confirm_password" required>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="********" required>
                 </div>
                 <div class="button-container">
-                    <button type="submit" class="signup-btn">Sign Up My Account</button>
+                    <button type="submit" class="signin-btn">Sign In</button>
                 </div>
             </form>
         </div>
