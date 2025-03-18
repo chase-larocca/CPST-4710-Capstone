@@ -64,6 +64,10 @@ def signup():
 
     return render_template('Account_Signup_Page.html')
 
+@app.route('/inventory_login')
+def inventory_login():
+    return render_template('InventoryManagementPage.html')
+
 # Product Page
 @app.route('/product')
 def product_page():

@@ -1,0 +1,47 @@
+.inventory-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  
+  .inventory-title {
+    font-size: 2rem;
+    margin-bottom: 24px;
+    color: var(--primary-green);
+    text-align: center;
+  }
+  
+  .inventory-table-wrapper {
+    width: 90%;
+    max-width: 1000px;
+    border: 4px solid var(--primary-green);
+    background-color: var(--card-bg);
+    border-radius: 6px;
+    overflow-x: auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .inventory-table th,
+  .inventory-table td {
+    border-bottom: 1px solid var(--border-gray);
+    padding: 14px 18px;
+    font-size: 14px;
+    text-align: center;
+  }
+  
+  .inventory-table th {
+    background-color: var(--primary-green);
+    color: white;
+    font-size: 16px;
+  }
+  
+  .inventory-table tr:hover {
+    background-color: #f0f0f0;
+  }
+  
