@@ -67,7 +67,8 @@
 
     <nav class="nav-bar">
         <a href="{{ url_for('signup') }}" class="nav-item">Create Account</a>
-        <a href="#" class="nav-item">Forgot Password</a>
+        <a href="#"  id="forgot-password-link" class="nav-item">Forgot Password</a>
+        <script src="{{ url_for('static', filename='js/forgotpassword.js') }}"></script>
     </nav>
 
     <main class="signin-container">

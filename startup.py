@@ -1,7 +1,10 @@
 import mysql.connector
 from mysql.connector import Error
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Blueprint
-from Python.Order_SP_Handler import order_blueprint  
+from Python.Order_SP_Handler import order_blueprint
+import random
+import string
+
 
 app = Flask(__name__)
 
@@ -40,7 +43,7 @@ def login():
     return render_template('SignIn_Page.html')  
 
 # Signup Page
-'''@app.route('/signup', methods=["GET", "POST"])
+@app.route('/signup', methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         username = request.form['username']
@@ -62,7 +65,7 @@ def signup():
 
             connection.close()
 
-    return render_template('Account_Signup_Page.html')'''
+    return render_template('Account_Signup_Page.html')
 
 # Product Page
 @app.route('/product')
@@ -79,6 +82,7 @@ def cart():
 def order_status():
     return render_template("OrderStatusPage.html")
 
+# Changing Account Information
 @app.route('/account', methods=["GET", "POST"])
 def account():
     if request.method == "POST":
@@ -111,43 +115,6 @@ def account():
             connection.close()
 
     return render_template('Account_Change_Information_Page.html')
-
-@app.route('/signup', methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":
-        print(request.form)  # Debugging: See what data is being received
-        
-        if "first_name" not in request.form:
-            flash("First Name is missing!", "error")
-            return redirect(url_for('signup'))
-
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        email = request.form['email']
-        password = request.form['password']
-
-        connection = connect_to_mysql()
-        if connection:
-            cursor = connection.cursor()
-            
-            # Check if user already exists
-            cursor.execute("SELECT * FROM Users WHERE Email=%s", (email,))
-            existing_user = cursor.fetchone()
-
-            if existing_user:
-                flash("Email already exists!", "error")
-            else:
-                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-                cursor.execute("INSERT INTO Users (FirstName, LastName, Email, PasswordHash) VALUES (%s, %s, %s, %s)",
-                               (first_name, last_name, email, hashed_password))
-                connection.commit()
-                flash("Account created successfully!", "success")
-                return redirect(url_for('login'))
-
-            connection.close()
-
-    return render_template('Account_Signup_Page.html')
-
 
 # Flask route to return inventory as JSON
 @app.route("/api/products", methods=["GET"])
@@ -186,6 +153,42 @@ def get_orders():
         return jsonify(orders)
     except Error as e:
         return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+# To deal with forget password button on sign up page
+@app.route("/api/forgot-password", methods=["POST"])
+def forgot_password():
+    data = request.json
+    email = data.get("email")
+
+    if not email:
+        return jsonify({"success": False, "error": "Email is required"}), 400
+
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"success": False, "error": "Database connection failed"}), 500
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM Users WHERE Email=%s", (email,))
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({"success": True})  
+
+        # Generate a temporary password (You could send an email instead)
+        temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+        # Store the temporary password in the database 
+        cursor.execute("UPDATE Users SET PasswordHash=%s WHERE Email=%s", (temp_password, email))
+        connection.commit()
+
+        return jsonify({"success": True, "message": f"A reset link has been sent to {email}"})
+
+    except Error as e:
+        return jsonify({"success": False, "error": str(e)}), 500
     finally:
         cursor.close()
         connection.close()
