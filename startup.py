@@ -155,6 +155,57 @@ def get_orders():
         cursor.close()
         connection.close()
 
+@app.route("/api/cart", methods=["GET"])
+def get_cart():
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT i.SKU, i.ItemName, ic.ColorName AS Color, 
+                   o.Quantity, i.Price, o.Customization
+            FROM Orders o
+            JOIN Inventory i ON o.SKU = i.SKU
+            LEFT JOIN InventoryColors ic ON o.SKU = ic.SKU
+            WHERE o.OrderStatus = 'Pending'
+        """)
+        cart_items = cursor.fetchall()
+        
+        # Format response
+        for item in cart_items:
+            customization_charge = 5 if item["Customization"] and item["Customization"] != "None" else 0
+            if item["Customization"] == "Patriotic":
+                customization_charge = 2
+            item["TotalPrice"] = round((item["Price"] + customization_charge) * item["Quantity"], 2)
+
+        return jsonify(cart_items)
+
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+@app.route("/api/cart/remove/<int:sku>", methods=["DELETE"])
+def remove_from_cart(sku):
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM Orders WHERE SKU = %s AND OrderStatus = 'Pending'", (sku,))
+        connection.commit()
+        return jsonify({"success": True})
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
 
 if __name__ == "__main__":
     app.run(debug=True)
+
