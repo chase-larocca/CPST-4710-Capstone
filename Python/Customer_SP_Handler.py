@@ -67,16 +67,6 @@ def main():
         record = cursor.fetchone()
         print("MySQL Database Version:", record)
         
-        # Test creating/updating a customer (pass 0 or None for a new customer)
-        create_or_update_customer(connection, 0, "John", "Smith", "john.smith@example.com", "123-456-7890", "456 State Street")
-
-        # Test retrieving a customer
-        customer = get_customer_by_id(connection, 1)
-        print("Retrieved Customer:", customer)
-
-        # Test deleting a customer
-        delete_customer(connection, 1)
-
         # Close connection
         cursor.close()
         connection.close()

@@ -45,8 +45,7 @@ def update_order(connection, order_id, total_price, order_status):
     finally:
         cursor.close()
 
-# Calls stored procedure to retrieve an order by ID
-
+# Calls stored procedure to retrieve order details
 order_blueprint = Blueprint('order_routes', __name__)
 
 @order_blueprint.route("/api/orders", methods=["GET"])
@@ -103,22 +102,6 @@ def main():
         cursor.execute("SELECT VERSION();")
         record = cursor.fetchone()
         print("MySQL Database Version:", record)
-
-        # Test creating an order
-        create_order(connection, 1, 99.99, "Pending")
-
-        # Test retrieving an order
-        order = get_order_by_id(connection, 1)
-        print("Retrieved Order:", order)
-
-        # Test updating an order
-        update_order(connection, 1, 109.99, "Shipped")
-
-        # Test cancelling an order
-        cancel_order(connection, 1)
-
-        # Test archiving an order
-        archive_order(connection, 1, "Order is outdated")
 
         # Close connection
         cursor.close()
