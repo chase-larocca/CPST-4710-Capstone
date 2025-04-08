@@ -66,7 +66,7 @@ document.addEventListener('click', function (event) {
       }
 
       const item = {
-        SKU: card.querySelector('.product-sku')?.textContent,  // or use the product object if available
+        SKU: card.querySelector('.product-sku')?.textContent,  
         name: card.querySelector('.product-name')?.textContent,
         price: parseFloat(card.querySelector('.product-price')?.textContent.replace('$', '')),
         color: card.querySelector('.color-select')?.value,

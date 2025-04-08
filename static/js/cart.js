@@ -73,9 +73,12 @@ document.querySelector('.submit-btn').addEventListener('click', () => {
     return;
   }
 
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   const orderData = {
     items: cart,
     total: orderTotal,
+    NumberOfItems: totalItems,
     shippingAddress: selectedAddressElement.textContent
   };
 

@@ -92,6 +92,50 @@ def cart():
 def order_status():
     return render_template("OrderStatusPage.html")
 
+
+
+
+@app.route("/api/submit-order", methods=["POST"])
+def submit_order():
+    data = request.get_json()
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"success": False, "error": "Database connection failed"}), 500
+    
+    try:
+        cursor = connection.cursor()
+
+        # For now, hardcode CustomerID = 1
+        customer_id = 1
+        total_price = data.get("total", 0.00)
+        order_status = "Pending"
+        order_items = data.get('items', [])
+        total_price = data.get('total', 0)
+        shipping_address = data.get('shippingAddress', 'None')  # fallback
+        number_of_items = data.get('numberOfItems', 0)          # <-- this line
+
+
+        # Insert into Orders table
+        insert_query = """
+            INSERT INTO Orders (CustomerID, TotalPrice, ShippingDestination, NumberOfItems, OrderStatus)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        cursor.execute(insert_query, (customer_id, total_price, shipping_address, number_of_items, order_status))
+        connection.commit()
+
+        # Get the generated OrderID
+        order_id = cursor.lastrowid
+
+        return jsonify({"success": True, "orderNumber": order_id})
+    
+    except Exception as e:
+        print("Order submission error:", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+    
+    finally:
+        cursor.close()
+        connection.close()
+
 @app.route("/api/inventory/update", methods=["POST"])
 def update_inventory():
     data = request.get_json()

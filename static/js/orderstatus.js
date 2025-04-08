@@ -7,7 +7,7 @@ fetch('/api/orders')
     data.forEach(order => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td>${order.OrderNumber}</td>
+        <td>${order.OrderID}</td>
         <td>${order.ShippingDestination}</td>
         <td>${order.NumberOfItems}</td>
         <td>${order.OrderStatus}</td>
