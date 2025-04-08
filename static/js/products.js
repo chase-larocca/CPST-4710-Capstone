@@ -6,11 +6,14 @@ fetch('/api/products')
   container.innerHTML = '';
 
   data.forEach(product => {
+    
+    const imageUrl = productImageBaseUrl + product.SKU + ".png"; // Change extension if needed
+    
     const card = document.createElement('div');
     card.classList.add('product-card');
 
     card.innerHTML = `
-  <img src="https://placehold.co/150x150" alt="Product" class="product-image" />
+  <img src="${imageUrl}" alt="${product.ItemName}" class="product-image" />
   <div class="product-details">
     <div class="product-title-price">
       <span class="product-name">${product.ItemName}</span>

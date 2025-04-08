@@ -9,6 +9,11 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/ProductPageStyles.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
 
+  <script>
+    const productImageBaseUrl = "{{ url_for('static', filename='images/thumbnails/SKU/') }}";
+  </script>
+  
+
 </head>
 
 <body>
@@ -38,14 +43,13 @@
 
   
     <div class="military-icons">
-      <img src="https://placehold.co/60x60?text=AF" alt="Air Force" />
-      <img src="https://placehold.co/60x60?text=Marines" alt="Marines" />
-      <img src="https://placehold.co/60x60?text=Army" alt="Army" />
-      <img src="https://placehold.co/60x60?text=Coast+Guard" alt="Coast Guard" />
-      <img src="https://placehold.co/60x60?text=Space+Force" alt="Space Force" />
-      <img src="https://placehold.co/60x60?text=Nat+Guard" alt="National Guard" />
-      <img src="https://placehold.co/60x60?text=Navy" alt="Navy" />
-      <img src="https://placehold.co/60x60?text=Patriotic" alt="Patriotic" />
+      <img src="static\Images\air_force_logo.png" alt="Air Force" />
+      <img src="static\Images\army_logo.png" alt="Army" />
+      <img src="static\Images\coast_guard_logo.png" alt="Coast Guard" />
+      <img src="static\Images\marines_logo.png" alt="Marines" />
+      <img src="static\Images\national_guard_logo.png" alt="National Guard" />
+      <img src="static\Images\navy_logo.png" alt="Navy" />
+      <img src="static\Images\space_force_logo.png" alt="Space Force" />
     </div>
 
     

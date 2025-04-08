@@ -15,7 +15,7 @@ def connect_to_mysql():
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
-            password="Dr3amC0ount3r$"",
+            password="Dr3amC0ount3r$",
             database="TTOps"
         )
         if connection.is_connected():
@@ -91,6 +91,29 @@ def cart():
 @app.route("/order-status")
 def order_status():
     return render_template("OrderStatusPage.html")
+
+@app.route("/api/inventory/update", methods=["POST"])
+def update_inventory():
+    data = request.get_json()
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "DB connection failed"}), 500
+    try:
+        cursor = connection.cursor()
+        cursor.callproc("sp_Inventory_CreateOrUpdate", (
+            data["SKU"], data["ItemName"], data["ItemDescription"],
+            data["Price"], data["QuantityInStock"],
+            data["Supplier"], data["RestockThreshold"]
+        ))
+        connection.commit()
+        return jsonify({"message": "Update successful"})
+    except Error as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
 
 # Changing Account Information
 @app.route('/account', methods=["GET", "POST"])
