@@ -3,9 +3,8 @@ from mysql.connector import Error
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Blueprint
 from Python.Order_SP_Handler import order_blueprint  
 
-app = Flask(__name__)
-
 app = Flask(__name__, static_folder='static', template_folder='templates')
+app.secret_key = 'a4f3e86de5f241f6b9112f882eecf1a3'
 
 app.register_blueprint(order_blueprint)
 
@@ -31,47 +30,85 @@ def connect_to_mysql():
 def home():
     return render_template('HomePage.html')
 
-# Sign-In Page (Shows login form, clicking "Sign In" redirects to product page)
+# Sign-In Page 
 @app.route('/login', methods=["GET", "POST"])
 def login():
-    #username = request.form.get('username')
-    #password = request.form.get('password') 
+    if request.method == "POST":
+        email = request.form.get('username')
+        password = request.form.get('password')
 
-    login_type = request.form.get('login_type')
+        connection = connect_to_mysql()
+        if connection:
+            try:
+                cursor = connection.cursor(dictionary=True)
+                cursor.execute("SELECT * FROM Users WHERE Email=%s", (email,))
+                user = cursor.fetchone()
 
-    if login_type == "inventory":
-        # Route to inventory management portal
-        return redirect(url_for('inventory'))  
-    elif login_type == "customer":
-        return redirect(url_for('product_page'))  
-    else:
-        return render_template('SignIn_Page.html')
-
+                if user and user['PasswordHash'] == password:
+                    role = user["Role"]
+                    if role == "Customer":
+                        return redirect(url_for('product_page'))
+                    else:
+                        return redirect(url_for('inventory'))
+                else:
+                    flash("Invalid login credentials", "error")
+            except Error as e:
+                print("Login error:", e)
+                flash("Login failed.", "error")
+            finally:
+                cursor.close()
+                connection.close()
+    return render_template('SignIn_Page.html')
 
 # Signup Page
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if not all([first_name, last_name, email, password, confirm_password]):
+            return render_template("Account_Signup_Page.html", error="Please fill out all fields.")
+
+        if password != confirm_password:
+            return render_template("Account_Signup_Page.html", error="Passwords do not match.")
 
         connection = connect_to_mysql()
-        if connection:
+        if not connection:
+            return render_template("Account_Signup_Page.html", error="Database connection failed.")
+
+        try:
             cursor = connection.cursor()
-            cursor.execute("SELECT * FROM Users WHERE username=%s OR email=%s", (username, email))
-            existing_user = cursor.fetchone()
+            # Check if email is already taken
+            cursor.execute("SELECT * FROM Users WHERE Email=%s", (email,))
+            if cursor.fetchone():
+                return render_template("Account_Signup_Page.html", error="Email already registered.")
 
-            if existing_user:
-                flash("Username or email already exists!", "error")
-            else:
-                cursor.execute("INSERT INTO Users (username, email, password) VALUES (%s, %s, %s)", (username, email, password))
-                connection.commit()
-                flash("Account created successfully!", "success")
-
+            # Insert new user
+            cursor.callproc("sp_Users_CreateOrUpdate", (
+                None,  
+                first_name,
+                last_name,
+                email,
+                password,  
+                "Customer"
+            ))
+            connection.commit()
+            return redirect(url_for("login"))
+        except Error as e:
+            import traceback
+            traceback.print_exc()
+            return render_template("Account_Signup_Page.html", error=f"Signup failed: {str(e)}")
+        finally:
+            cursor.close()
             connection.close()
+    else:
+        return render_template("Account_Signup_Page.html")
 
-    return render_template('Account_Signup_Page.html')
+
 
 @app.route('/inventory')
 def inventory():
@@ -228,5 +265,5 @@ def forgot_password():
         connection.close()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5055)
 
