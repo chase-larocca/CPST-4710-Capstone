@@ -2,7 +2,7 @@ fetch('/api/orders')
   .then(response => response.json())
   .then(data => {
     const tableBody = document.getElementById('order-table-body');
-    tableBody.innerHTML = ''; // Clear any placeholders
+    tableBody.innerHTML = ''; 
 
     data.forEach(order => {
       const row = document.createElement('tr');
