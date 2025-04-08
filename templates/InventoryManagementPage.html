@@ -24,6 +24,7 @@
   <main class="inventory-container">
     <h1 class="inventory-title">Inventory Overview</h1>
     <button id="addItemBtn" class="add-item-btn">Add Item</button>
+
     <div class="inventory-table-wrapper">
       <table class="inventory-table">
         <thead>
@@ -38,9 +39,11 @@
             <th>Edit</th>
           </tr>
         </thead>
+
         <tbody id="inventory-body">
           <!-- Populated by JS -->
         </tbody>
+
       </table>
     </div>
   </main>
@@ -50,5 +53,6 @@
 
   <!-- JavaScript (must go at the end and use defer or load last) -->
   <script src="{{ url_for('static', filename='js/inventory.js') }}" defer></script>
+  
 </body>
 </html>

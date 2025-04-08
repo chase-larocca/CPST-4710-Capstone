@@ -41,7 +41,7 @@ def login():
 
     if login_type == "inventory":
         # Route to inventory management portal
-        return redirect(url_for('inventory_login'))  
+        return redirect(url_for('inventory'))  
     elif login_type == "customer":
         return redirect(url_for('product_page'))  
     else:
@@ -73,8 +73,8 @@ def signup():
 
     return render_template('Account_Signup_Page.html')
 
-@app.route('/inventory_login')
-def inventory_login():
+@app.route('/inventory')
+def inventory():
     return render_template('InventoryManagementPage.html')
 
 # Product Page
