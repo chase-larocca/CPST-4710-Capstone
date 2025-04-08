@@ -20,6 +20,7 @@ fetch('/api/products')
       <span class="separator">|</span>
       <span class="product-price">$${parseFloat(product.Price).toFixed(2)}</span>
     </div>
+    <div class="product-sku">${product.SKU}</div>
     <div class="customization-row">
       <select class="color-select">
         ${(product.Colors ?? []).map(c => `<option>${c}</option>`).join('')}
@@ -52,12 +53,12 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 document.addEventListener('click', function (event) {
     if (event.target.classList.contains('add-to-cart-btn')) {
       const card = event.target.closest('.product-card');
-  
-      const name = card.querySelector('.product-name')?.textContent;
-      const price = parseFloat(card.querySelector('.product-price')?.textContent.replace('$', '') || 0);
-      const color = card.querySelector('.color-select')?.value;
-      const customization = card.querySelector('.customization-select')?.value;
-      const quantity = parseInt(card.querySelector('.qty-field')?.value || 0);
+
+  //    const name = card.querySelector('.product-name')?.textContent;
+ //     const price = parseFloat(card.querySelector('.product-price')?.textContent.replace('$', '') || 0);
+  //    const color = card.querySelector('.color-select')?.value;
+  //    const customization = card.querySelector('.customization-select')?.value;
+     const quantity = parseInt(card.querySelector('.qty-field')?.value || 0);
   
       if (!quantity || quantity <= 0) {
         alert("Please enter a valid quantity.");
@@ -65,12 +66,14 @@ document.addEventListener('click', function (event) {
       }
 
       const item = {
-        name,
-        price,
-        color,
-        customization,
+        SKU: card.querySelector('.product-sku')?.textContent,  // or use the product object if available
+        name: card.querySelector('.product-name')?.textContent,
+        price: parseFloat(card.querySelector('.product-price')?.textContent.replace('$', '')),
+        color: card.querySelector('.color-select')?.value,
+        customization: card.querySelector('.customization-select')?.value,
         quantity
       };
+      
   
       cart.push(item);
       localStorage.setItem('cart', JSON.stringify(cart));

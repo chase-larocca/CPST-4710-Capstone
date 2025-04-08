@@ -14,6 +14,7 @@ cartTable.innerHTML = '';
 // Populate cart dynamically
 cart.forEach((item, index) => {
   const row = document.createElement('tr');
+  const imageUrl = productImageBaseUrl + item.SKU + ".png";  
 
   // Calculate customization charge
   const customizationCharge = (item.customization === 'Patriotic' ? 2 :
@@ -23,7 +24,8 @@ cart.forEach((item, index) => {
 
   row.innerHTML = `
     <td class="product-info">
-      <img src="${item.image || 'https://placehold.co/40x40'}" alt="Product">
+      
+      <img src="${imageUrl}" alt="test" >
       ${item.name}
     </td>
     <td>${item.color}</td>
