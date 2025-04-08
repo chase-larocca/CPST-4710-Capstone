@@ -36,6 +36,7 @@ def login():
     if request.method == "POST":
         email = request.form.get('username')
         password = request.form.get('password')
+        login_type = request.form.get('login_type') 
 
         connection = connect_to_mysql()
         if connection:
@@ -46,12 +47,16 @@ def login():
 
                 if user and user['PasswordHash'] == password:
                     role = user["Role"]
-                    if role == "Customer":
+
+                    if login_type == "customer" and role in ["Customer", "Employee"]:
                         return redirect(url_for('product_page'))
-                    else:
+                    elif login_type == "inventory" and role == "Employee":
                         return redirect(url_for('inventory'))
+                    else:
+                        flash("Access Denied: incorrect role") # Does not wrok
                 else:
                     flash("Invalid login credentials", "error")
+
             except Error as e:
                 print("Login error:", e)
                 flash("Login failed.", "error")
@@ -149,7 +154,7 @@ def submit_order():
         order_items = data.get('items', [])
         total_price = data.get('total', 0)
         shipping_address = data.get('shippingAddress', 'None')  # fallback
-        number_of_items = data.get('numberOfItems', 0)          # <-- this line
+        number_of_items = data.get('NumberOfItems', 0)          # <-- this line
 
 
         # Insert into Orders table

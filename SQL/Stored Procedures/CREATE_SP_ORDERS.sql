@@ -54,9 +54,10 @@ DELIMITER //
 CREATE PROCEDURE sp_GetOrderStatuses()
 BEGIN
     SELECT 
-        OrderNumber,
+		OrderID,
         ShippingDestination,
         NumberOfItems,
+        TotalPrice,
         OrderStatus
     FROM Orders
     ORDER BY OrderDate DESC;

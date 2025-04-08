@@ -10,6 +10,7 @@ fetch('/api/orders')
         <td>${order.OrderID}</td>
         <td>${order.ShippingDestination}</td>
         <td>${order.NumberOfItems}</td>
+        <td>${order.TotalPrice}</td>
         <td>${order.OrderStatus}</td>
       `;
       tableBody.appendChild(row);

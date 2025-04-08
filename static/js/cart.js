@@ -75,12 +75,16 @@ document.querySelector('.submit-btn').addEventListener('click', () => {
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  console.log("Total Number of Items:", totalItems);
+
   const orderData = {
     items: cart,
     total: orderTotal,
     NumberOfItems: totalItems,
     shippingAddress: selectedAddressElement.textContent
   };
+
+  console.log("Order Data:", orderData)
 
   fetch('/api/submit-order', {
     method: 'POST',
