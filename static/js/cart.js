@@ -30,7 +30,7 @@ cart.forEach((item, index) => {
     </td>
     <td>${item.color}</td>
     <td>${item.customization}</td>
-    <td>${item.quantity}</td>
+    <td><input type="number" min="1" class="qty-input" data-index="${index}" value="${item.quantity}"></td>
     <td>$${itemTotal.toFixed(2)}</td>
     <td><button class="remove-btn" data-index="${index}">🗑️</button></td>
   `;
@@ -45,9 +45,11 @@ orderTotalElement.textContent = `$${orderTotal.toFixed(2)}`;
 document.addEventListener('click', function (e) {
   if (e.target.classList.contains('remove-btn')) {
     const index = e.target.dataset.index;
-    cart.splice(index, 1);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    location.reload(); 
+    if (confirm("Are you sure you want to remove this item from the cart?")) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      location.reload();
+    }    
   }
 });
 
@@ -111,4 +113,18 @@ document.querySelector('.submit-btn').addEventListener('click', () => {
 // Handle "Shop More" button
 document.querySelector('.shop-btn').addEventListener('click', () => {
   window.location.href = '/product';
+});
+
+// Handle quantity update
+document.addEventListener('input', function (e) {
+  if (e.target.classList.contains('qty-input')) {
+    const index = e.target.dataset.index;
+    const newQty = parseInt(e.target.value);
+
+    if (!isNaN(newQty) && newQty > 0) {
+      cart[index].quantity = newQty;
+      localStorage.setItem('cart', JSON.stringify(cart));
+      location.reload();
+    }
+  }
 });
