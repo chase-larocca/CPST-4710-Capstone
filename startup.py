@@ -2,11 +2,20 @@ import mysql.connector
 from mysql.connector import Error
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, Blueprint
 from Python.Order_SP_Handler import order_blueprint  
+import re
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = 'a4f3e86de5f241f6b9112f882eecf1a3'
 
 app.register_blueprint(order_blueprint)
+
+# Function for passwordc validation 
+def is_valid_password(password):
+    return (
+        len(password) >= 7 and
+        re.search(r"[!@#$%^&*(),.?\":{}|<>]", password) and
+        re.search(r"\d", password)
+    )
 
 # Connects to local MySQL database
 def connect_to_mysql():
@@ -109,7 +118,8 @@ def signup():
 
         if password != confirm_password:
             return render_template("Account_Signup_Page.html", error="Passwords do not match.")
-
+        if not is_valid_password(password):
+            return render_template("Account_Signup_Page.html", error="Password must be at least 7 characters long, include a number and a special character.")
         connection = connect_to_mysql()
         if not connection:
             return render_template("Account_Signup_Page.html", error="Database connection failed.")
@@ -166,8 +176,6 @@ def order_status():
         return redirect(url_for('login'))
     
     return render_template('OrderStatusPage.html')
-
-
 
 @app.route("/api/submit-order", methods=["POST"])
 def submit_order():
@@ -505,7 +513,9 @@ def get_inventory_items():
         return jsonify(list(products.values()))
     
     except Error as e:
-        return jsonify({"error": "Failed to read inventory"}), 500
+        import traceback
+        traceback.print_exc()  
+        return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
         connection.close()
