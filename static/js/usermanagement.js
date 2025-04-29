@@ -14,7 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${user.LastName}</td>
             <td>${user.Email}</td>
             <td>${user.Role}</td>
-            <td><button class="edit-btn" data-id="${user.UserID}">Edit</button></td>
+            <td>
+              <div class="user-actions">
+                <button class="edit-btn" data-id="${user.UserID}">Edit</button>
+                <button class="delete-btn" data-id="${user.UserID}">Delete</button>
+              </div>
+            </td>
+
+
           `;
           tableBody.appendChild(row);
         });
@@ -22,7 +29,114 @@ document.addEventListener('DOMContentLoaded', () => {
         attachUserEditHandlers(data);
       })
       .catch(error => console.error('Failed to load users:', error));
+
+      const addUserBtn = document.getElementById('addUserBtn');
+      const addUserModal = document.getElementById('addUserModal');
+      const closeAddUserBtn = document.querySelector('.close-add-user');
+    
+      addUserBtn.addEventListener('click', () => {
+        addUserModal.style.display = 'flex';
+      });
+    
+      closeAddUserBtn.addEventListener('click', () => {
+        addUserModal.style.display = 'none';
+      });
+    
+      window.addEventListener('click', (e) => {
+        if (e.target === addUserModal) {
+          addUserModal.style.display = 'none';
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+          const userId = e.target.dataset.id;
+          const confirmed = confirm("Are you sure you want to delete this user?");
+      
+          if (confirmed) {
+            fetch(`/api/admin/users/${userId}`, {
+              method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                showToast("User deleted successfully.");
+                setTimeout(() => location.reload(), 2000); // Delay to allow toast to show
+
+              } else {
+                showToast("Failed to delete user.");
+
+              }
+            })
+            .catch(error => {
+              console.error('Error deleting user:', error);
+              alert("An error occurred. Please try again.");
+            });
+          }
+        }
+      });
+      
+      document.getElementById('submitNewUserBtn').addEventListener('click', () => {
+        const newUserData = {
+          FirstName: document.getElementById('new-firstname').value.trim(),
+          LastName: document.getElementById('new-lastname').value.trim(),
+          Email: document.getElementById('new-email').value.trim(),
+          Username: document.getElementById('new-username').value.trim(),
+          Password: document.getElementById('new-password').value.trim(),
+          ConfirmPassword: document.getElementById('confirm-password').value.trim(),
+          Role: document.getElementById('new-role').value
+        };
+      
+        if (!newUserData.FirstName || !newUserData.LastName || !newUserData.Email ||
+            !newUserData.Username || !newUserData.Password || !newUserData.ConfirmPassword) {
+          alert("Please fill out all fields.");
+          return;
+        }
+      
+        if (newUserData.Password !== newUserData.ConfirmPassword) {
+          alert("Passwords do not match!");
+          return;
+        }
+      
+        fetch('/api/admin/users/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newUserData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert("User added successfully!");
+            document.getElementById('addUserModal').style.display = 'none';
+            location.reload();
+          } else {
+            alert("Failed to add user: " + (data.error || ""));
+          }
+        })
+        .catch(error => {
+          console.error('Failed to add user:', error);
+          alert("An error occurred. Please try again.");
+        });
+      });
+      
   });
+
+  function showToast(message, duration = 3000, type = 'success') {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+  
+    toast.textContent = message;
+    toast.style.backgroundColor = type === 'error' ? '#d9534f' : 'var(--primary-green)';
+    toast.classList.remove('hidden');
+    toast.classList.add('show');
+  
+    setTimeout(() => {
+      toast.classList.remove('show');
+      toast.classList.add('hidden');
+    }, duration);
+  }
+  
+  
   
   function attachUserEditHandlers(users) {
     document.querySelectorAll('.edit-btn').forEach(btn => {
@@ -47,10 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <label>Role:</label>
             <select id="edit-role">
-            <option${user.Role === 'customer' ? ' selected' : ''}>customer</option>
-            <option${user.Role === 'inventory_manager' ? ' selected' : ''}>inventory_manager</option>
-            <option${user.Role === 'order_manager' ? ' selected' : ''}>order_manager</option>
-            <option${user.Role === 'admin' ? ' selected' : ''}>admin</option>
+            <option${user.Role === 'Customer' ? ' selected' : ''}>Customer</option>
+            <option${user.Role === 'Employee' ? ' selected' : ''}>Employee</option>
+            <option${user.Role === 'Admin' ? ' selected' : ''}>Admin</option>
             </select>
 
             <button id="update-user-btn">Save Changes</button>
@@ -78,14 +191,19 @@ document.addEventListener('DOMContentLoaded', () => {
           })
           .then(res => res.json())
           .then(data => {
-            alert(data.message || 'User updated');
-            modal.style.display = 'none';
-            location.reload();
+            if (data.success) {
+              showToast("User updated successfully.");
+              modal.style.display = 'none';
+              setTimeout(() => location.reload(), 1000); // Let toast show
+            } else {
+              showToast("Failed to update user.", 3000, 'error');
+            }
           })
           .catch(err => {
             console.error('Update failed:', err);
-            alert('Failed to update user.');
+            showToast("An error occurred while updating.", 3000, 'error');
           });
+          
         };
       });
     });

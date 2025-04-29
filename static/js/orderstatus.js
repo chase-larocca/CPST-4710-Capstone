@@ -28,7 +28,6 @@ fetch('/api/orders')
     console.error('Failed to fetch or parse orders:', error);
   });
 
-
   document.addEventListener('click', function(e) {
     if (e.target.classList.contains('view-items-btn')) {
       const orderId = e.target.dataset.id;

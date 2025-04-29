@@ -24,5 +24,46 @@
   a {
     text-decoration: none;
   }
+
+
+  .user-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .edit-btn, .delete-btn {
+    font-weight: bold;
+    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+  }
+  
+  .edit-btn {
+    border: 3px solid var(--primary-green);
+    background: white;
+    color: var(--primary-green);
+  }
+  
+  .edit-btn:hover {
+    background-color: var(--primary-green);
+    color: white;
+    transform: scale(1.03);
+  }
+  
+  .delete-btn {
+    border: 3px solid #d9534f;
+    background: white;
+    color: #d9534f;
+  }
+  
+  .delete-btn:hover {
+    background-color: #d9534f;
+    color: white;
+    transform: scale(1.03);
+  }
+  
   
  

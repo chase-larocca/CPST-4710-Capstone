@@ -22,7 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${item.QuantityInStock}</td>
           <td>${item.RestockThreshold}</td>
           <td>
-            <button class="edit-btn" data-sku="${item.SKU}">Edit</button>
+            <div class="user-actions">
+              <button class="edit-btn" data-id="${item.SKU}">Edit</button>
+              <button class="delete-btn" data-id="${item.SKU}">Delete</button>
+            </div>
           </td>
         `;
         tableBody.appendChild(row);
@@ -62,10 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
         RestockThreshold: parseInt(document.getElementById('newItemRestock').value),
       };
 
-      // Placeholder for POST request later
-      console.log("New Item Data:", newItemData);
-      alert("Item added (simulated)!");
-      addItemModal.style.display = 'none';
     });
   } else {
     console.error('Add Item Modal elements not found.');
@@ -93,9 +92,9 @@ document.getElementById('submitNewItemBtn').addEventListener('click', () => {
     return response.json();
   })
   .then(data => {
-    alert(data.message);
+    showToast(data.message || "Item added successfully.");
     document.getElementById('addItemModal').style.display = 'none';
-    location.reload(); // Reload to fetch the updated inventory
+    setTimeout(() => location.reload(), 2000);
   })
   .catch(error => {
     console.error('Insert failed:', error);
@@ -103,11 +102,56 @@ document.getElementById('submitNewItemBtn').addEventListener('click', () => {
   });
 });
 
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('delete-btn')) {
+    const sku = e.target.dataset.id;
+    const confirmed = confirm(`Are you sure you want to delete item with SKU ${sku}?`);
+
+    if (confirmed) {
+      fetch(`/api/inventory/delete/${sku}`, {
+        method: 'DELETE'
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast("Item deleted successfully.");
+          setTimeout(() => location.reload(), 2000);
+        } else {
+          showToast("Failed to delete item.", 3000, 'error');
+        }
+        
+      })
+      .catch(error => {
+        console.error('Delete failed:', error);
+        showToast("An error occurred. Please try again.", 3000, 'error');
+      });
+      
+    }
+  }
+});
+
+function showToast(message, duration = 3000, type = 'success') {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.style.backgroundColor = type === 'error' ? '#d9534f' : 'var(--primary-green)';
+  toast.classList.remove('hidden');
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.classList.add('hidden');
+  }, duration);
+}
+
+
 
   function attachEditButtonListeners(inventory) {
     document.querySelectorAll('.edit-btn').forEach(button => {
       button.addEventListener('click', () => {
-        const sku = button.dataset.sku;
+        const sku = button.dataset.id;
+
         const item = inventory.find(i => i.SKU === sku);
         if (!item) return;
   
@@ -180,7 +224,9 @@ document.getElementById('submitNewItemBtn').addEventListener('click', () => {
             Supplier: document.getElementById('editSupplier').value,
             RestockThreshold: parseInt(document.getElementById('editRestock').value)
           };
-  
+          
+          console.log("Updating with:", updatedData);
+
           fetch('/api/inventory/update', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -188,14 +234,19 @@ document.getElementById('submitNewItemBtn').addEventListener('click', () => {
           })
           .then(response => response.json())
           .then(data => {
-            alert('Inventory updated successfully!');
-            modal.style.display = 'none';
-            location.reload(); 
+            if (data.success) {
+              showToast("Inventory updated successfully.");
+              modal.style.display = 'none';
+              setTimeout(() => location.reload(), 3000);
+            } else {
+              showToast("Failed to update inventory.", 3000, 'error');
+            }
           })
           .catch(error => {
             console.error('Update failed:', error);
-            alert('Failed to update inventory.');
+            showToast("An error occurred while updating inventory.", 3000, 'error');
           });
+          
         });
       });
     });

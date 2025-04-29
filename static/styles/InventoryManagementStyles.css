@@ -247,23 +247,6 @@ textarea {
   margin-right: 20px;
 }
 
-.edit-btn {
-  background-color: transparent;       
-  border: 2px solid var(--primary-green); 
-  color: var(--primary-green);            
-  border-radius: 20px;                   
-  padding: 6px 16px;                     
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.edit-btn:hover {
-  background-color: var(--primary-green);  
-  color: #fff;                             
-}
-
 #editItemDesc {
   resize: none;
 }
@@ -271,16 +254,16 @@ textarea {
 .inventory-header {
   width: 90%;
   max-width: 1400px;
-  margin-bottom: 5px; /* Less bottom margin, keep title close */
+  margin-bottom: 5px; 
   display: flex;
-  justify-content: center; /* Center only the title */
+  justify-content: center; 
   align-items: center;
 }
 
 .add-item-container {
   width: 90%;
   max-width: 1400px;
-  margin-bottom: 15px; /* Slight gap above the table */
+  margin-bottom: 15px;
   display: flex;
   justify-content: flex-end; /* Push button to the right */
 }
@@ -289,10 +272,10 @@ textarea {
   border: 3px solid var(--primary-green);
   background: white;
   color: var(--primary-green);
-  padding: 10px 24px; /* ⬅ Slightly more padding */
-  border-radius: 22px; /* ⬅ Slightly more roundness */
+  padding: 10px 24px; 
+  border-radius: 22px;
   font-weight: bold;
-  font-size: 16px; /* ⬅ Font size about 10% larger */
+  font-size: 16px; 
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s, transform 0.2s;
 }
@@ -300,8 +283,8 @@ textarea {
 #addItemBtn:hover {
   background-color: var(--primary-green);
   color: white;
-  transform: scale(1.05); /* Still have slight grow */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* ⬅ Add soft shadow */
+  transform: scale(1.05); 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /
   transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.2s;
 
 }
@@ -310,7 +293,6 @@ textarea {
   transform: scale(0.97); /* Slightly shrink when clicked */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Lower shadow when pressed */
 }
-
 
 .edit-btn {
   border: 3px solid var(--primary-green);
@@ -327,14 +309,21 @@ textarea {
 .edit-btn:hover {
   background-color: var(--primary-green);
   color: white;
-  transform: scale(1.03); /* Slight grow but less than Add Item */
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Softer, lighter shadow */
+  transform: scale(1.03); 
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); 
   transition: background-color 0.3s, color 0.3s;
 }
 
 .edit-btn:active {
   transform: scale(0.97);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.user-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px; 
 }
 
 
@@ -350,6 +339,99 @@ textarea {
   border-radius: 4px;
   border: 1px solid var(--border-gray);
 }
+
+
+.user-management-header {
+  width: 90%;
+  max-width: 1400px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-user-wrapper {
+  width: 90%;
+  max-width: 1400px;
+  margin-bottom: 15px; /* Slight gap above the table */
+  display: flex;
+  justify-content: flex-end; 
+}
+
+
+.add-user-btn {
+  border: 3px solid var(--primary-green);
+  background: white;
+  color: var(--primary-green);
+  padding: 10px 24px; 
+  border-radius: 22px; 
+  font-weight: bold;
+  font-size: 16px; 
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+.add-user-btn:hover {
+  background-color: var(--primary-green);
+  color: white;
+  transform: scale(1.05);
+}
+
+.delete-btn {
+  border: 3px solid #d9534f;
+  background: white;
+  color: #d9534f;
+  padding: 8px 18px;
+  border-radius: 20px; 
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #d9534f;
+  color: white;
+  transform: scale(1.03); /* subtle grow like .edit-btn */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: var(--primary-green);
+  color: white;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.hidden {
+  display: none;
+}
+
+
+
+
+
 
 
 

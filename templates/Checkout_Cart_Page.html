@@ -41,17 +41,27 @@
             font-size: 18px;
         }
 
+        #cart-table-body td {
+            padding: 16px 12px;
+            vertical-align: middle;
+        }
+
         .product-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 14px;
+            white-space: nowrap;
+        }
+
+
+        .product-info span {
+            padding-left: 5px;
         }
 
         .product-info img {
             width: 40px;
             height: 40px;
-            border-radius: 5px;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         .trash-icon {
@@ -77,7 +87,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            width: 350px; /* control width */
+            width: 350px; 
         }
 
         .shipping-form label {
@@ -236,6 +246,7 @@
         <table class="cart-table">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Product</th>
                     <th>Color</th>
                     <th>Customization</th>
@@ -269,8 +280,8 @@
             <div class="order-total-box">
                 <h3>Item Subtotal: $<span id="item-subtotal">0.00</span></h3>
                 <h3>Customization Fees: $<span id="customization-fees">0.00</span></h3>
-                <h2>Order Total: $<span id="order-total">0.00</span></h2>
-                <p class="address-output">Selected Delivery Address:</p>
+                <h2>Order Total: <span id="order-total">0.00</span></h2>
+                <p class="address-output">Delivery Address</p>
               
                 <div class="button-container">
                   <button class="cart-btn shop-btn">Shop More</button>
@@ -279,10 +290,6 @@
               </div>
               
           </div>
-          
-
-
-          
 
         <div id="editCartModal" class="modal">
             <div class="modal-content">

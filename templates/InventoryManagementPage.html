@@ -18,12 +18,14 @@
   <div class="nav-bar">
     <a class="nav-item" href="/inventory" id="inventory-link">Inventory Overview</a>
     <a class="nav-item" href="/order-management" id="order-management-link">Order Management</a>
-    <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
+    {% if session.get('role') == 'Admin' %}
+      <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
+    {% endif %}
+
     <a class="nav-item" href="/account" id="account-link">My Account</a>
     <a class="nav-item" href="/" id="logout-link">Log Out</a>
   </div>
   
-
   <main class="inventory-container">
 
     <div class="add-item-container">
@@ -41,7 +43,7 @@
             <th>Price</th>
             <th>Quantity in Stock</th>
             <th>Restock Threshold</th>
-            <th></th>
+            <th></th> <!-- Button Column -->
           </tr>
         </thead>
 
@@ -104,8 +106,7 @@
     </div>
     
   </div>
-  
-  
+
 
   <!-- JavaScript (must go at the end and use defer or load last) -->
   <script src="{{ url_for('static', filename='js/inventory.js') }}" defer></script>
@@ -122,6 +123,10 @@
       }
     });
   </script>
+
+  
+  <!-- Toast Container -->
+  <div id="toast" class="toast hidden"></div>
   
 </body>
 </html>

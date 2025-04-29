@@ -43,16 +43,21 @@ document.addEventListener('DOMContentLoaded', () => {
     row.innerHTML = `
       <td class="product-info">
         <img src="${imageUrl}" alt="${item.name}">
-        ${item.name}
       </td>
+
+      <td><span>${item.name}</span></td>
+
       <td>${item.color}</td>
       <td>${item.customization}</td>
       <td>${item.quantity}</td>
       <td>$${itemTotal.toFixed(2)}</td>
       <td>
-        <button class="edit-cart-btn" data-index="${index}">✏️</button>
-        <button class="remove-btn" data-index="${index}">🗑️</button>
+        <div class="user-actions">
+          <button class="edit-btn" data-index="${index}">Edit</button>
+          <button class="delete-btn" data-index="${index}">Delete</button>
+        </div>
       </td>
+
     `;
 
     cartTable.appendChild(row);
@@ -112,9 +117,86 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
+  document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('edit-btn')) {
+      const index = e.target.dataset.index;
+      const item = cart[index];
+  
+      if (!item) return;
+  
+      // Open the existing modal
+      const editModal = document.getElementById('editCartModal');
+      editModal.classList.add('show');
+  
+      // Populate modal fields
+      loadColorOptions(item.color, item.sku);
+      document.getElementById('editCustomization').value = item.customization || '';
+      document.getElementById('editQuantity').value = item.quantity || 1;
+
+      document.querySelector('.close-edit').addEventListener('click', () => {
+        document.getElementById('editCartModal').classList.remove('show');
+      });
+      
+  
+      // Set up save button handler dynamically
+      const saveButton = document.getElementById('saveEditCartBtn');
+      saveButton.onclick = () => {
+        const updatedColor = document.getElementById('editColor').value;
+        const updatedCustomization = document.getElementById('editCustomization').value;
+        const updatedQuantity = parseInt(document.getElementById('editQuantity').value);
+  
+        if (!updatedQuantity || updatedQuantity <= 0) {
+          alert("Quantity must be at least 1.");
+          return;
+        }
+  
+        cart[index].color = updatedColor;
+        cart[index].customization = updatedCustomization;
+        cart[index].quantity = updatedQuantity;
+  
+        localStorage.setItem('cart', JSON.stringify(cart));
+  
+        editModal.classList.remove('show');
+        location.reload();
+      };
+    }
+  });
+  
+  function loadColorOptions(selectedColor = '', sku = '') {
+    if (!sku) return;
+  
+    fetch(`/api/colors-for-sku/${sku}`)
+      .then(response => response.json())
+      .then(colors => {
+        const colorSelect = document.getElementById('editColor');
+        colorSelect.innerHTML = ''; // Clear previous options
+  
+        colors.forEach(color => {
+          const option = document.createElement('option');
+          option.value = color.ColorName;
+          option.textContent = color.ColorName;
+  
+          if (color.ColorName === selectedColor) {
+            option.selected = true;
+          }
+  
+          colorSelect.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error('Failed to load SKU-specific color options:', error);
+      });
+  }
+
+  document.querySelector('.shop-btn')?.addEventListener('click', () => {
+    window.location.href = '/product';
+  });
+  
+  
+
   cartTable.addEventListener('click', (e) => {
     const index = e.target.dataset.index;
-    if (e.target.classList.contains('remove-btn')) {
+    if (e.target.classList.contains('delete-btn')) {
       cart.splice(index, 1);
       localStorage.setItem('cart', JSON.stringify(cart));
       location.reload();

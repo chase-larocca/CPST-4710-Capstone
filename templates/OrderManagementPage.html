@@ -19,7 +19,10 @@
   <div class="nav-bar">
     <a class="nav-item" href="/inventory" id="inventory-link">Inventory Overview</a>
     <a class="nav-item" href="/order-management" id="order-management-link">Order Management</a>
-    <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
+    {% if session.get('role') == 'Admin' %}
+      <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
+    {% endif %}
+
     <a class="nav-item" href="/account" id="account-link">My Account</a>
     <a class="nav-item" href="/" id="logout-link">Log Out</a>
   </div>
@@ -35,7 +38,7 @@
             <th>Items</th>
             <th>Total Price</th>
             <th>Status</th>
-            <th></th>
+            <th></th> <!-- Button Column -->
           </tr>
         </thead>
         <tbody id="order-management-body">
