@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/SignupStyles.css') }}">
+    <style>
+        body {
+            background-color: var(--page-bg);
+        }
+        .signin-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 13vh; 
+        }
+
+        .signin-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: left;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            font-size: 16px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid var(--border-gray);
+        }
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+        .signin-btn {
+            background-color: var(--primary-green);
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin: 20px auto 0 auto; /* top auto bottom auto to center */
+            width: fit-content
+        }
+
+        .signin-btn:hover {
+            background-color: #1a4534;
+        }
+
+        .inventory-login-btn {
+            display: block;
+            margin: 20px auto 0 auto; 
+            padding: 10px 20px;
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .button-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <img src="{{ url_for('static', filename='images/SouthBalanceLogo.png') }}" alt="South Balance Logo" class="logo" />
+        <h1 class="page-title">Please Sign In to Access Your Account</h1>
+    </header>
+
+    <nav class="nav-bar">
+        
+        <a href="#"  id="forgot-password-link" class="nav-item">Forgot Password</a>
+        <script src="{{ url_for('static', filename='js/forgotpassword.js') }}"></script>
+    </nav>
+
+    <main class="signin-container">
+        <div class="signin-content">
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+            <form action="{{ url_for('login') }}" method="post">
+                <div class="form-group">
+                    <label for="username">Email:</label>
+                    <input type="text" id="username" name="username" placeholder="Enter Username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="********" required>
+                </div>
+                <div class="button-container button-stack">
+                    <button type="submit" name="login_type" value="customer" class="signin-btn">Customer Sign In</button>
+                    <button type="submit" name="login_type" value="inventory" class="signin-btn">Inventory Management Login</button>
+                </div>
+
+            </form>
+        </div>
+
+        
+
+    </main>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!-- templates/OrderManagementPage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/InventoryManagementStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/OrderManagementStyles.css') }}">
+</head>
+<body>
+
+  <div class="page-header">
+    <img src="{{ url_for('static', filename='images/SouthBalanceLogo.png') }}" alt="South Balance Logo" class="logo" />
+    <h1 class="page-title">South Balance Order Management</h1>
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-item" href="/inventory" id="inventory-link">Inventory Overview</a>
+    <a class="nav-item" href="/order-management" id="order-management-link">Order Management</a>
+    {% if session.get('role') == 'Admin' %}
+      <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
+    {% endif %}
+
+    <a class="nav-item" href="/account" id="account-link">My Account</a>
+    <a class="nav-item" href="/" id="logout-link">Log Out</a>
+  </div>
+
+  <main class="inventory-container">
+    <div class="inventory-table-wrapper">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Shipping Address</th>
+            <th>Items</th>
+            <th>Total Price</th>
+            <th>Status</th>
+            <th></th> <!-- Button Column -->
+          </tr>
+        </thead>
+        <tbody id="order-management-body">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal for editing orders -->
+  <div id="editOrderModal" class="modal" style="display: none;"></div>
+
+  <script src="{{ url_for('static', filename='js/ordermanagement.js') }}" defer></script>
+</body>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const path = window.location.pathname;
+  
+      if (path.startsWith('/inventory')) {
+        document.getElementById('inventory-link')?.classList.add('active');
+      } else if (path.startsWith('/order-management')) {
+        document.getElementById('order-management-link')?.classList.add('active');
+      } else if (path.startsWith('/account')) {
+        document.getElementById('account-link')?.classList.add('active');
+      }
+    });
+  </script>
+  
+</html>

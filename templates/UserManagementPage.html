@@ -1,0 +1,115 @@
+<!-- templates/UserManagementPage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/InventoryManagementStyles.css') }}">
+</head>
+<body>
+
+  <div class="page-header">
+    <img src="{{ url_for('static', filename='images/SouthBalanceLogo.png') }}" alt="South Balance Logo" class="logo" />
+    <h1 class="page-title">South Balance User Management</h1>
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-item" href="/inventory" id="inventory-link">Inventory Overview</a>
+    <a class="nav-item" href="/order-management" id="order-management-link">Order Management</a>
+    <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
+    <a class="nav-item" href="/account" id="account-link">My Account</a>
+    <a class="nav-item" href="/" id="logout-link">Log Out</a>
+  </div>
+
+  
+  <main class="inventory-container">
+
+    <div class="add-user-wrapper">
+      <button id="addUserBtn" class="add-user-btn">Add User</button>
+    </div>
+
+    <div class="inventory-table-wrapper">
+
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th></th> <!-- Button Column -->
+          </tr>
+        </thead>
+        <tbody id="user-management-body">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal for editing users -->
+  <div id="editUserModal" class="modal" style="display: none;"></div>
+
+  <!-- Add User Modal -->
+  <div id="addUserModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close-add-user" style="float:right;cursor:pointer;">&times;</span>
+      <h2>Add New User</h2>
+
+      <label>First Name:</label>
+      <input type="text" id="new-firstname">
+
+      <label>Last Name:</label>
+      <input type="text" id="new-lastname">
+
+      <label>Email:</label>
+      <input type="email" id="new-email">
+
+      <label>Username:</label>
+      <input type="text" id="new-username">
+
+      <label>Password:</label>
+      <input type="password" id="new-password">
+
+      <label>Confirm Password:</label>
+      <input type="password" id="confirm-password">
+
+      <label>Role:</label>
+      <select id="new-role">
+        <option>Employee</option>
+        <option>Customer</option>
+        <option>Admin</option>
+      </select>
+
+      <button id="submitNewUserBtn">Create User</button>
+    </div>
+  </div>
+
+
+
+
+  <script src="{{ url_for('static', filename='js/usermanagement.js') }}" defer></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const path = window.location.pathname;
+      if (path.startsWith('/inventory')) {
+        document.getElementById('inventory-link')?.classList.add('active');
+      } else if (path.startsWith('/order-management')) {
+        document.getElementById('order-management-link')?.classList.add('active');
+      } else if (path.startsWith('/user-management')) {
+        document.getElementById('user-management-link')?.classList.add('active');
+      } else if (path.startsWith('/account')) {
+        document.getElementById('account-link')?.classList.add('active');
+      }
+    });
+  </script>
+
+  <!-- Toast Container -->
+  <div id="toast" class="toast hidden"></div>
+
+</body>
+</html>

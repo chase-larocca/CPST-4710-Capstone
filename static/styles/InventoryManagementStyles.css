@@ -1,0 +1,442 @@
+.inventory-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.inventory-title {
+  font-size: 2rem;
+  margin-bottom: 24px;
+  color: var(--primary-green);
+  text-align: center;
+}
+
+.inventory-table-wrapper {
+  width: 90%;
+  max-width: 1400px;
+  border: 4px solid var(--primary-green);
+  background-color: var(--card-bg);
+  border-radius: 6px;
+  overflow-x: auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inventory-table th:nth-child(5),
+.inventory-table td:nth-child(5),
+.inventory-table th:nth-child(6),
+.inventory-table td:nth-child(6),
+.inventory-table th:nth-child(7),
+.inventory-table td:nth-child(7) {
+  text-align: right;
+  width: 80px;
+}
+
+.inventory-table td:nth-child(2),
+.inventory-table th:nth-child(2),
+.inventory-table td:nth-child(3),
+.inventory-table th:nth-child(3),
+.inventory-table td:nth-child(4),
+.inventory-table th:nth-child(4) {
+  text-align: left;
+}
+
+.inventory-table tr:nth-child(even) {
+  background-color: #eaeaea; 
+}
+
+.inventory-table th,
+.inventory-table td {
+  border-bottom: 1px solid var(--border-gray);
+  padding: 14px 20px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.inventory-table th {
+  background-color: var(--primary-green);
+  color: white;
+  font-size: 16px;
+}
+
+.inventory-table tr:hover {
+  background-color: #f0f0f0;
+}
+
+#editModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; 
+  justify-content: center;  
+  align-items: center;      
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--card-bg);
+  padding: 24px;
+  border-radius: 8px;
+  min-width: 600px;
+  max-width: 90%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+/* Shared styling for input, textarea inside ANY modal */
+.modal-content input[type="text"],
+.modal-content input[type="number"],
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid var(--border-gray);
+  box-sizing: border-box;
+}
+
+/* Modal Title Styling */
+.modal-content h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Button inside modal */
+.modal-content button {
+  width: 100%;
+  background-color: var(--primary-green);
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Button hover effect */
+.modal-content button:hover {
+  background-color: #1a4534;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.modal-grid .full-width {
+  grid-column: span 2; /* Make the description field stretch across both columns */
+}
+
+.modal-content textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+
+/* Close (×) button */
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+
+.thumbnail-column {
+  flex: 0 0 auto;
+}
+
+.product-thumbnail {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.fields-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fields-column label {
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+.fields-column input,
+.fields-column textarea {
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+textarea {
+  height: 60px;
+  resize: vertical;
+}
+
+.horizontal-fields {
+  display: flex;
+  gap: 12px;
+}
+
+.horizontal-fields > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Update button */
+#update-inventory-btn {
+  background-color: var(--primary-green);
+  color: white;
+  font-weight: 600;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#update-inventory-btn:hover {
+  background-color: #1a4534;
+}
+
+.small-input {
+  width: 80px;         
+  max-width: 100px;    
+  text-align: right;   
+}
+
+.sku-container {
+  margin-right: 20px;
+}
+
+#editItemDesc {
+  resize: none;
+}
+
+.inventory-header {
+  width: 90%;
+  max-width: 1400px;
+  margin-bottom: 5px; 
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+}
+
+.add-item-container {
+  width: 90%;
+  max-width: 1400px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: flex-end; /* Push button to the right */
+}
+
+#addItemBtn {
+  border: 3px solid var(--primary-green);
+  background: white;
+  color: var(--primary-green);
+  padding: 10px 24px; 
+  border-radius: 22px;
+  font-weight: bold;
+  font-size: 16px; 
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+#addItemBtn:hover {
+  background-color: var(--primary-green);
+  color: white;
+  transform: scale(1.05); 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /
+  transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.2s;
+
+}
+
+#addItemBtn:active {
+  transform: scale(0.97); /* Slightly shrink when clicked */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Lower shadow when pressed */
+}
+
+.edit-btn {
+  border: 3px solid var(--primary-green);
+  background: white;
+  color: var(--primary-green);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.edit-btn:hover {
+  background-color: var(--primary-green);
+  color: white;
+  transform: scale(1.03); 
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); 
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.edit-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.user-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px; 
+}
+
+
+
+
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid var(--border-gray);
+}
+
+
+.user-management-header {
+  width: 90%;
+  max-width: 1400px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-user-wrapper {
+  width: 90%;
+  max-width: 1400px;
+  margin-bottom: 15px; /* Slight gap above the table */
+  display: flex;
+  justify-content: flex-end; 
+}
+
+
+.add-user-btn {
+  border: 3px solid var(--primary-green);
+  background: white;
+  color: var(--primary-green);
+  padding: 10px 24px; 
+  border-radius: 22px; 
+  font-weight: bold;
+  font-size: 16px; 
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+.add-user-btn:hover {
+  background-color: var(--primary-green);
+  color: white;
+  transform: scale(1.05);
+}
+
+.delete-btn {
+  border: 3px solid #d9534f;
+  background: white;
+  color: #d9534f;
+  padding: 8px 18px;
+  border-radius: 20px; 
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #d9534f;
+  color: white;
+  transform: scale(1.03); /* subtle grow like .edit-btn */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: var(--primary-green);
+  color: white;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.hidden {
+  display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+  

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/AccountStyles.css') }}">
+    <style>
+        .account-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+        .account-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: left;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            font-size: 16px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid var(--border-gray);
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .cancel-btn {
+            background-color: gray;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .update-btn {
+            background-color: var(--primary-green);
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <img src="{{ url_for('static', filename='images/SouthBalanceLogo.png') }}" alt="South Balance Logo" class="logo" />
+        <h1 class="page-title">My Account</h1>
+    </header>
+
+    <div class="nav-bar">
+        <a class="nav-item" href="/product">Products</a>
+        <a class="nav-item" href="/cart">Cart</a>
+        <a class="nav-item" href="/order-status">Orders</a>
+        <a class="nav-item" href="/account">My Account</a>
+        <a class="nav-item" href="/">Log Out</a>
+      </div>
+
+    <main class="account-container">
+        <div class="account-content">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flashes">
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="{{ url_for('account') }}">
+                <div class="form-group">
+                    <label for="username">Email:</label>
+                    <input type="text" id="username" name="username" placeholder="Enter New Username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">New Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Enter New Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New Password:</label>
+                    <input type="password" id="new-password" name="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password:</label>
+                    <input type="password" id="confirm-password" name="confirm-password">
+                </div>
+                <div class="button-container">
+                    <a href="{{ url_for('product_page') }}" class="cancel-btn">Cancel</a>
+                    <button type="submit" class="update-btn">Update Account</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

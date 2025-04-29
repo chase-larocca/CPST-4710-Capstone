@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Products</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/ProductPageStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+
+  <script>
+    const productImageBaseUrl = "{{ url_for('static', filename='images/thumbnails/SKU/') }}";
+  </script>
+  
+
+</head>
+
+<body>
+
+  <div class="page-header">
+    <img src="{{ url_for('static', filename='images/SouthBalanceLogo.png') }}" alt="South Balance Logo" class="logo" />
+    <h1 class="page-title">Products</h1>
+  </div>
+
+ 
+  <div class="nav-bar">
+    <a class="nav-item" href="/product">Products</a>
+    <a class="nav-item" href="/cart">Cart</a>
+    <a class="nav-item" href="/order-status">Orders</a>
+    <a class="nav-item" href="/account">My Account</a>
+    <a class="nav-item" href="/">Log Out</a>
+  </div>
+
+
+  <div class="main-content">
+    
+    <div class="customization-info">
+      <h2>Military Branch Customizations</h2>
+      <p>Customizations: A $5 charge for each item with a military branch customization and a $2 charge for each item with a patriotic customization will be added at checkout</p>
+    </div>
+    
+
+  
+    <div class="military-icons">
+      <img src="static\Images\air_force_logo.png" alt="Air Force" />
+      <img src="static\Images\army_logo.png" alt="Army" />
+      <img src="static\Images\coast_guard_logo.png" alt="Coast Guard" />
+      <img src="static\Images\marines_logo.png" alt="Marines" />
+      <img src="static\Images\national_guard_logo.png" alt="National Guard" />
+      <img src="static\Images\navy_logo.png" alt="Navy" />
+      <img src="static\Images\space_force_logo.png" alt="Space Force" />
+    </div>
+
+    
+    <div class="product-grid">
+    </div>
+
+  </div>
+
+  <!--JS -->
+
+<script src="{{ url_for('static', filename='js/products.js') }}"></script>
+
+</body>
+</html>
+

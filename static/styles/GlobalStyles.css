@@ -1,0 +1,69 @@
+/* global.css */
+
+:root {
+    --primary-green: #21543F;
+    --background: #E3E3E3;
+    --text-color: #000000;
+    --card-bg: #FFFFFF;
+    --accent: #21543F;
+    --border-gray: #CCCCCC;
+  }
+  
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background);
+    color: var(--text-color);
+    user-select: none;
+  }
+  
+  input, textarea, select {
+    user-select: text;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+
+  .user-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .edit-btn, .delete-btn {
+    font-weight: bold;
+    font-size: 14px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+  }
+  
+  .edit-btn {
+    border: 3px solid var(--primary-green);
+    background: white;
+    color: var(--primary-green);
+  }
+  
+  .edit-btn:hover {
+    background-color: var(--primary-green);
+    color: white;
+    transform: scale(1.03);
+  }
+  
+  .delete-btn {
+    border: 3px solid #d9534f;
+    background: white;
+    color: #d9534f;
+  }
+  
+  .delete-btn:hover {
+    background-color: #d9534f;
+    color: white;
+    transform: scale(1.03);
+  }
+  
+  
+ 

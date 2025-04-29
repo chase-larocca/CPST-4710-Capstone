@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/SignupStyles.css') }}">
+    <script src="{{ url_for('static', filename='js/form-validation.js') }}" defer></script> 
+    <style>
+        .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+        .signup-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: left;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            font-size: 16px;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid var(--border-gray);
+        }
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+        .signup-btn {
+            background-color: var(--primary-green);
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .signup-btn:hover {
+            background-color: #1a4534;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <img src="{{ url_for('static', filename='images/SouthBalanceLogo.png') }}" alt="South Balance Logo" class="logo" />
+        <h1 class="page-title">Please Sign Up for Your Account</h1>
+    </header>
+
+    <nav class="nav-bar">
+        <a href="{{ url_for('login') }}" class="nav-item">Already have an account? Login</a>
+    </nav>
+
+    <main class="signup-container">
+        <div class="signup-content">
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+            <form action="/signup" method="post" id="signup-form">
+                <div class="form-group">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" id="first_name" name="first_name" placeholder="Enter First Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="last_name" name="last_name" placeholder="Enter Last Name" required>
+                </div>                
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" placeholder="Enter New Username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Enter New Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">New Password:</label>
+                    <input type="password" id="new-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password:</label>
+                    <input type="password" id="confirm-password" name="confirm_password" required>
+                </div>
+                <div class="button-container">
+                    <button type="submit" class="signup-btn">Sign Up My Account</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
