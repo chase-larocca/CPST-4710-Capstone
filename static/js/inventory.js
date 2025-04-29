@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Populate inventory table
   fetch('/api/products')
     .then(response => response.json())
     .then(data => {
@@ -30,9 +31,79 @@ document.addEventListener('DOMContentLoaded', () => {
       attachEditButtonListeners(data);
     })
     .catch(error => console.error('Error fetching products:', error));
+
+  // Add Item Model Button 
+  const addItemBtn = document.getElementById('addItemBtn');
+  const addItemModal = document.getElementById('addItemModal');
+  const closeAddBtn = document.querySelector('.close-add');
+
+  if (addItemBtn && addItemModal && closeAddBtn) {
+    addItemBtn.addEventListener('click', () => {
+      addItemModal.style.display = 'flex';
+    });
+
+    closeAddBtn.addEventListener('click', () => {
+      addItemModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === addItemModal) {
+        addItemModal.style.display = 'none';
+      }
+    });
+
+    document.getElementById('submitNewItemBtn').addEventListener('click', () => {
+      const newItemData = {
+        ItemName: document.getElementById('newItemName').value,
+        ItemDescription: document.getElementById('newItemDescription').value,
+        Supplier: document.getElementById('newItemSupplier').value,
+        Price: parseFloat(document.getElementById('newItemPrice').value),
+        QuantityInStock: parseInt(document.getElementById('newItemQuantity').value),
+        RestockThreshold: parseInt(document.getElementById('newItemRestock').value),
+      };
+
+      // Placeholder for POST request later
+      console.log("New Item Data:", newItemData);
+      alert("Item added (simulated)!");
+      addItemModal.style.display = 'none';
+    });
+  } else {
+    console.error('Add Item Modal elements not found.');
+  }
 });
 
-  
+document.getElementById('submitNewItemBtn').addEventListener('click', () => {
+  const newItemData = {
+    SKU: document.getElementById('add-sku').value,
+    ItemName: document.getElementById('add-itemName').value,
+    ItemDescription: document.getElementById('add-description').value,
+    Supplier: document.getElementById('add-supplier').value,
+    Price: parseFloat(document.getElementById('add-price').value),
+    QuantityInStock: parseInt(document.getElementById('add-quantity').value),
+    RestockThreshold: parseInt(document.getElementById('add-threshold').value),
+  };
+
+  fetch('/api/inventory/add', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newItemData)
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Insert failed");
+    return response.json();
+  })
+  .then(data => {
+    alert(data.message);
+    document.getElementById('addItemModal').style.display = 'none';
+    location.reload(); // Reload to fetch the updated inventory
+  })
+  .catch(error => {
+    console.error('Insert failed:', error);
+    alert('Failed to add item.');
+  });
+});
+
+
   function attachEditButtonListeners(inventory) {
     document.querySelectorAll('.edit-btn').forEach(button => {
       button.addEventListener('click', () => {

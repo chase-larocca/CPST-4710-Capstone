@@ -16,15 +16,20 @@
   </div>
 
   <div class="nav-bar">
-    <a class="nav-item" href="/inventory_login">Inventory Overview</a>
-    <a class="nav-item" href="/account">My Account</a>
-    <a class="nav-item" href="/">Log Out</a>
+    <a class="nav-item" href="/inventory" id="inventory-link">Inventory Overview</a>
+    <a class="nav-item" href="/order-management" id="order-management-link">Order Management</a>
+    <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
+    <a class="nav-item" href="/account" id="account-link">My Account</a>
+    <a class="nav-item" href="/" id="logout-link">Log Out</a>
   </div>
+  
 
   <main class="inventory-container">
-    <h1 class="inventory-title">Inventory Overview</h1>
-    <button id="addItemBtn" class="add-item-btn">Add Item</button>
 
+    <div class="add-item-container">
+      <button id="addItemBtn" class="add-item-btn">Add Item</button>
+    </div>
+  
     <div class="inventory-table-wrapper">
       <table class="inventory-table">
         <thead>
@@ -36,7 +41,7 @@
             <th>Price</th>
             <th>Quantity in Stock</th>
             <th>Restock Threshold</th>
-            <th>Edit</th>
+            <th></th>
           </tr>
         </thead>
 
@@ -51,8 +56,72 @@
   <!-- Modal Placeholder -->
   <div id="editModal" style="display: none;"></div>
 
+  <div id="addItemModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close-button close-add">&times;</span>
+
+      <h2>Add New Inventory Item</h2>
+    
+      <div class="modal-grid">
+        <div>
+          <label for="add-sku">SKU:</label>
+          <input type="text" id="add-sku" placeholder="e.g., BUB-40OZ-BLK">
+        </div>
+    
+        <div>
+          <label for="add-itemName">Item Name:</label>
+          <input type="text" id="add-itemName" placeholder="Product Name">
+        </div>
+    
+        <div class="full-width">
+          <label for="add-description">Description:</label>
+          <textarea id="add-description" placeholder="Enter product description"></textarea>
+        </div>
+    
+        <div>
+          <label for="add-supplier">Supplier:</label>
+          <input type="text" id="add-supplier" placeholder="Supplier Name">
+        </div>
+    
+        <div>
+          <label for="add-price">Price:</label>
+          <input type="number" id="add-price" step="0.01" placeholder="0.00">
+        </div>
+    
+        <div>
+          <label for="add-quantity">Quantity in Stock:</label>
+          <input type="number" id="add-quantity" placeholder="0">
+        </div>
+    
+        <div>
+          <label for="add-threshold">Restock Threshold:</label>
+          <input type="number" id="add-threshold" placeholder="0">
+        </div>
+      </div>
+    
+      <button id="submitNewItemBtn">Add Item</button>
+
+    </div>
+    
+  </div>
+  
+  
+
   <!-- JavaScript (must go at the end and use defer or load last) -->
   <script src="{{ url_for('static', filename='js/inventory.js') }}" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const path = window.location.pathname;
+  
+      if (path.startsWith('/inventory')) {
+        document.getElementById('inventory-link')?.classList.add('active');
+      } else if (path.startsWith('/order-management')) {
+        document.getElementById('order-management-link')?.classList.add('active');
+      } else if (path.startsWith('/account')) {
+        document.getElementById('account-link')?.classList.add('active');
+      }
+    });
+  </script>
   
 </body>
 </html>

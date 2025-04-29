@@ -9,45 +9,45 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/OrderStatusStyles.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
 
+  <script src="{{ url_for('static', filename='js/orderstatus.js') }}" defer></script>
+
+
 </head>
 
 
 <body>
 
- 
   <div class="page-header">
     <img src="{{ url_for('static', filename='images/SouthBalanceLogo.png') }}" alt="South Balance Logo" class="logo" />
     <h1 class="page-title">Order Status</h1>
   </div>
 
- 
   <div class="nav-bar">
     <a class="nav-item" href="/product">Products</a>
     <a class="nav-item" href="/cart">Cart</a>
     <a class="nav-item" href="/order-status">Orders</a>
     <a class="nav-item" href="/account">My Account</a>
-    <a class="nav-item" href="#">Log Out</a>
+    <a class="nav-item" href="/">Log Out</a>
   </div>
 
- 
   <div class="main-content">
     <div class="order-status-container">
         <table class="order-table">
-            <thead>
-              <tr>
-                <th>Order Number</th>
-                <th>Shipping Destination</th>
-                <th>Number of Items</th>
-                <th>Order Price</th>
-                <th>Order Status</th>
-              </tr>
-            </thead>
-            <tbody id="order-table-body">
-              <!--JS-->
-            </tbody>
-          </table>
+          <thead>
+            <tr>
+              <th>Order Number</th>
+              <th>Shipping Destination</th>
+              <th>Number of Items</th>
+              <th>Order Status</th>
+              <th>Actions</th> <!-- New Column for Buttons -->
+            </tr>
+          </thead>
+          <tbody id="order-status-body">
+            <!-- Populated dynamically -->
+          </tbody>
+            
+        </table>
           
-          </table>
     </div>
     
 
@@ -58,6 +58,27 @@
 
   </div>
 
-  <script src="{{ url_for('static', filename='js/orderstatus.js') }}"></script>
+  <!-- View Items Modal -->
+  <div id="viewItemsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close-view-items" style="float:right;cursor:pointer;">&times;</span>
+      <h2>Order Items</h2>
+      <table id="items-table" style="width:100%; margin-top: 10px; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="border-bottom: 2px solid #1a4633;">Product Name</th>
+            <th style="border-bottom: 2px solid #1a4633;">Quantity</th>
+            <th style="border-bottom: 2px solid #1a4633;">Price</th>
+          </tr>
+        </thead>
+        <tbody id="items-table-body">
+          <!-- Filled dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  
 </body>
 </html>

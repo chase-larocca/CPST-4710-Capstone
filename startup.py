@@ -1,6 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Blueprint
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, Blueprint
 from Python.Order_SP_Handler import order_blueprint  
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -36,7 +36,7 @@ def login():
     if request.method == "POST":
         email = request.form.get('username')
         password = request.form.get('password')
-        login_type = request.form.get('login_type') 
+        login_type = request.form.get('login_type')
 
         connection = connect_to_mysql()
         if connection:
@@ -46,14 +46,43 @@ def login():
                 user = cursor.fetchone()
 
                 if user and user['PasswordHash'] == password:
-                    role = user["Role"]
+                    session['user_id'] = user['UserID']
+                    role = user['Role']
+
+                    # Check if customer exists
+                    customer_conn = connect_to_mysql()
+                    if customer_conn:
+                        customer_cursor = customer_conn.cursor()
+                        customer_cursor.execute(
+                            "SELECT CustomerID FROM Customers WHERE CustomerID = %s", (user['UserID'],)
+                        )
+                        existing_customer = customer_cursor.fetchone()
+
+                        if not existing_customer:
+                            # Insert new customer into Customers table
+                            # Assuming Email like: john.doe@example.com -> FirstName = John, LastName = Doe
+                            email_parts = user['Email'].split('@')[0].split('.')
+                            first_name = email_parts[0].capitalize() if len(email_parts) > 0 else "First"
+                            last_name = email_parts[1].capitalize() if len(email_parts) > 1 else "Last"
+
+                            customer_cursor.execute(
+                                """
+                                INSERT INTO Customers (CustomerID, FirstName, LastName, Email)
+                                VALUES (%s, %s, %s, %s)
+                                """,
+                                (user['UserID'], first_name, last_name, user['Email'])
+                            )
+                            customer_conn.commit()
+
+                        customer_cursor.close()
+                        customer_conn.close()
 
                     if login_type == "customer" and role in ["Customer", "Employee"]:
                         return redirect(url_for('product_page'))
                     elif login_type == "inventory" and role == "Employee":
                         return redirect(url_for('inventory'))
                     else:
-                        flash("Access Denied: incorrect role") # Does not wrok
+                        flash("Access Denied: incorrect role", "error")
                 else:
                     flash("Invalid login credentials", "error")
 
@@ -113,8 +142,6 @@ def signup():
     else:
         return render_template("Account_Signup_Page.html")
 
-
-
 @app.route('/inventory')
 def inventory():
     return render_template('InventoryManagementPage.html')
@@ -129,11 +156,16 @@ def product_page():
 def cart():
     return render_template("Checkout_Cart_Page.html")
 
+
+
 # Order Status Page
 @app.route("/order-status")
 def order_status():
-    return render_template("OrderStatusPage.html")
-
+    if 'user_id' not in session:
+        flash("You must be logged in to view orders.", "error")
+        return redirect(url_for('login'))
+    
+    return render_template('OrderStatusPage.html')
 
 
 
@@ -143,40 +175,120 @@ def submit_order():
     connection = connect_to_mysql()
     if not connection:
         return jsonify({"success": False, "error": "Database connection failed"}), 500
-    
+
     try:
-        cursor = connection.cursor()
+        cursor = connection.cursor(dictionary=True)
 
-        # For now, hardcode CustomerID = 1
-        customer_id = 1
+        customer_id = session.get('user_id')
         total_price = data.get("total", 0.00)
-        order_status = "Pending"
         order_items = data.get('items', [])
-        total_price = data.get('total', 0)
-        shipping_address = data.get('shippingAddress', 'None')  # fallback
-        number_of_items = data.get('NumberOfItems', 0)          # <-- this line
+        shipping_address = data.get('shippingAddress', 'None')
+        number_of_items = data.get('NumberOfItems', 0)
 
+        # ✅ Step 1: Check inventory levels
+        for item in order_items:
+            sku = item.get('sku')
+            quantity_ordered = item.get('quantity', 0)
 
-        # Insert into Orders table
+            cursor.execute("SELECT QuantityInStock FROM Inventory WHERE SKU = %s", (sku,))
+            result = cursor.fetchone()
+
+            if not result or result["QuantityInStock"] < quantity_ordered:
+                return jsonify({
+                    "success": False,
+                    "error": f"Not enough stock for SKU: {sku}. Available: {result['QuantityInStock'] if result else 0}"
+                }), 400
+
+        # ✅ Step 2: Insert into Orders
         insert_query = """
-            INSERT INTO Orders (CustomerID, TotalPrice, ShippingDestination, NumberOfItems, OrderStatus)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO Orders (CustomerID, ShippingDestination, NumberOfItems, TotalPrice, OrderStatus)
+            VALUES (%s, %s, %s, %s, 'Pending')
         """
-        cursor.execute(insert_query, (customer_id, total_price, shipping_address, number_of_items, order_status))
+        cursor.execute(insert_query, (customer_id, shipping_address, number_of_items, total_price))
         connection.commit()
 
-        # Get the generated OrderID
         order_id = cursor.lastrowid
 
+        # ✅ Step 3: Insert each item into OrderItems
+        for item in order_items:
+            sku = item.get('sku')
+            name = item.get('name')
+            quantity = item.get('quantity', 1)
+            price = item.get('price')
+
+            cursor.execute("""
+                INSERT INTO OrderItems (OrderID, SKU, ProductName, Quantity, Price)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (order_id, sku, name, quantity, price))
+
+            # ✅ Step 4: Reduce inventory
+            cursor.execute("""
+                UPDATE Inventory
+                SET QuantityInStock = QuantityInStock - %s
+                WHERE SKU = %s
+            """, (quantity, sku))
+
+        connection.commit()
+
         return jsonify({"success": True, "orderNumber": order_id})
-    
+
     except Exception as e:
         print("Order submission error:", e)
         return jsonify({"success": False, "error": str(e)}), 500
-    
+
     finally:
         cursor.close()
         connection.close()
+
+@app.route("/api/order/<int:order_id>/items", methods=["GET"])
+def get_order_items(order_id):
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        query = """
+            SELECT ProductName, Quantity, Price
+            FROM OrderItems
+            WHERE OrderID = %s
+        """
+        cursor.execute(query, (order_id,))
+        items = cursor.fetchall()
+        return jsonify(items)
+    except Error as e:
+        print("Order items retrieval error:", e)
+        return jsonify({"error": "Failed to fetch order items"}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+@app.route("/api/inventory/add", methods=["POST"])
+def add_inventory_item():
+    data = request.get_json()
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "DB connection failed"}), 500
+
+    try:
+        cursor = connection.cursor()
+        cursor.callproc("sp_AddInventoryItem", [
+            data["SKU"],
+            data["ItemName"],
+            data["ItemDescription"],
+            data["Supplier"],
+            data["Price"],
+            data["QuantityInStock"],
+            data["RestockThreshold"]
+        ])
+        connection.commit()
+        return jsonify({"message": "Item added successfully!"}), 201
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
 
 @app.route("/api/inventory/update", methods=["POST"])
 def update_inventory():
@@ -199,6 +311,131 @@ def update_inventory():
     finally:
         cursor.close()
         connection.close()
+
+@app.route('/order-management')
+def order_management():
+    return render_template('OrderManagementPage.html')
+
+@app.route('/api/admin/orders')
+def get_all_orders_for_admin():
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        query = """
+            SELECT o.OrderID, o.ShippingDestination, o.NumberOfItems, o.TotalPrice, o.OrderStatus,
+                   c.FirstName, c.LastName
+            FROM Orders o
+            JOIN Customers c ON o.CustomerID = c.CustomerID
+            ORDER BY o.OrderDate DESC
+        """
+        cursor.execute(query)
+        orders = cursor.fetchall()
+        return jsonify(orders)
+    except Error as e:
+        print("Admin Order retrieval error:", e)
+        return jsonify({"error": "Failed to fetch orders"}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+@app.route('/api/admin/orders/update', methods=["POST"])
+def update_order_admin():
+    data = request.get_json()
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "DB connection failed"}), 500
+
+    try:
+        cursor = connection.cursor()
+        query = """
+            UPDATE Orders
+            SET ShippingDestination = %s,
+                NumberOfItems = %s,
+                OrderStatus = %s
+            WHERE OrderID = %s
+        """
+        cursor.execute(query, (
+            data["ShippingDestination"],
+            data["NumberOfItems"],
+            data["OrderStatus"],
+            data["OrderID"]
+        ))
+        connection.commit()
+        return jsonify({"message": "Order updated"})
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+@app.route('/user-management')
+def user_management():
+    return render_template('UserManagementPage.html')
+
+
+@app.route('/api/admin/users', methods=['GET'])
+def get_all_users_admin():
+    connection = connect_to_mysql()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = connection.cursor(dictionary=True)
+        query = """
+            SELECT UserID, FirstName, LastName, Email, Role
+            FROM Users
+            ORDER BY LastName ASC
+        """
+        cursor.execute(query)
+        users = cursor.fetchall()
+        return jsonify(users)
+    except Error as e:
+        print("Error fetching users:", e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+@app.route('/api/admin/users/update', methods=['POST'])
+def update_user_admin():
+    
+    data = request.get_json()
+    connection = connect_to_mysql()
+
+    print("Incoming update payload:", data)
+
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        cursor = connection.cursor()
+        update_query = """
+            UPDATE Users
+            SET FirstName = %s,
+                LastName = %s,
+                Email = %s,
+                Role = %s
+            WHERE UserID = %s
+        """
+        cursor.execute(update_query, (
+            data["FirstName"],
+            data["LastName"],
+            data["Email"],
+            data["Role"],
+            data["UserID"]
+        ))
+        connection.commit()
+        return jsonify({"message": "User updated successfully."})
+    except Error as e:
+        print("Error updating user:", e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
 
 
 # Changing Account Information
@@ -235,7 +472,6 @@ def account():
 
     return render_template('Account_Change_Information_Page.html')
 
-
 # Flask route to return inventory as JSON
 @app.route("/api/products", methods=["GET"])
 def get_inventory_items():
@@ -246,19 +482,35 @@ def get_inventory_items():
     try:
         cursor = connection.cursor(dictionary=True)
         cursor.callproc("sp_InventoryWithColors")
-        results = []
+
+        products = {}
+
         for result in cursor.stored_results():
             for row in result.fetchall():
-                row['Colors'] = [row['ColorName']] if row['ColorName'] else []
-                del row['ColorName']
-                results.append(row)
-        return jsonify(results)
+                sku = row['SKU']
+                if sku not in products:
+                    products[sku] = {
+                        'SKU': sku,
+                        'ItemName': row['ItemName'],
+                        'ItemDescription': row['ItemDescription'],
+                        'Price': row['Price'],
+                        'QuantityInStock': row['QuantityInStock'],
+                        'Supplier': row['Supplier'],
+                        'RestockThreshold': row['RestockThreshold'],
+                        'Colors': []  
+                    }
+                if row['ColorName']:
+                    products[sku]['Colors'].append(row['ColorName'])
+
+        return jsonify(list(products.values()))
+    
     except Error as e:
         return jsonify({"error": "Failed to read inventory"}), 500
     finally:
         cursor.close()
         connection.close()
 
+@app.route('/api/orders')
 def get_orders():
     connection = connect_to_mysql()
     if not connection:
@@ -266,16 +518,24 @@ def get_orders():
 
     try:
         cursor = connection.cursor(dictionary=True)
-        cursor.callproc("sp_GetOrderStatuses")
-        orders = []
-        for result in cursor.stored_results():
-            orders = result.fetchall()
+        customer_id = session.get('user_id')
+
+        if not customer_id:
+            return jsonify({"error": "User not logged in"}), 403
+
+        query = "SELECT OrderID, ShippingDestination, NumberOfItems, OrderStatus FROM Orders WHERE CustomerID = %s"
+        cursor.execute(query, (customer_id,))
+        orders = cursor.fetchall()
+
         return jsonify(orders)
+
     except Error as e:
-        return jsonify({"error": str(e)}), 500
+        print("Order retrieval error:", e)
+        return jsonify({"error": "Failed to fetch orders"}), 500
     finally:
         cursor.close()
         connection.close()
+
 
 # To deal with forget password button on sign up page
 @app.route("/api/forgot-password", methods=["POST"])

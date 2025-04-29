@@ -44,5 +44,13 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+
+.nav-item.active {
+    background-color: var(--primary-green);
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    padding: 8px 16px;
+  }
   
 

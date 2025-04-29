@@ -1,114 +1,123 @@
-// Retrieve the cart from localStorage
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
+// cart.js
 
-// Get references to HTML elements
-const cartTable = document.getElementById('cart-items');
-const orderTotalElement = document.getElementById('order-total');
-const selectedAddressElement = document.querySelector('.order-total-box p');
+document.addEventListener('DOMContentLoaded', () => {
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const cartTable = document.getElementById('cart-table-body');
+  const orderTotalElement = document.getElementById('order-total');
+  const selectedAddressElement = document.querySelector('.address-output');
+  const addressSection = document.querySelector('.shipping-form');
 
-let orderTotal = 0;
+  let itemSubtotal = 0;
+  let customizationFee = 0;
+  let totalItems = 0;
 
-// Clear table content before populating
-cartTable.innerHTML = '';
+  const productImageBaseUrl = '/static/Images/thumbnails/SKU/';
 
-// Populate cart dynamically
-cart.forEach((item, index) => {
-  const row = document.createElement('tr');
-  const imageUrl = productImageBaseUrl + item.SKU + ".png";  
-
-  // Calculate customization charge
-  const customizationCharge = (item.customization === 'Patriotic' ? 2 :
-                               item.customization !== 'Customize' && item.customization !== '' ? 5 : 0);
-  const itemTotal = (item.price + customizationCharge) * item.quantity;
-  orderTotal += itemTotal;
-
-  row.innerHTML = `
-    <td class="product-info">
-      
-      <img src="${imageUrl}" alt="test" >
-      ${item.name}
-    </td>
-    <td>${item.color}</td>
-    <td>${item.customization}</td>
-    <td>${item.quantity}</td>
-    <td>$${itemTotal.toFixed(2)}</td>
-    <td><button class="remove-btn" data-index="${index}">🗑️</button></td>
-  `;
-
-  cartTable.appendChild(row);
-});
-
-// Update order total display
-orderTotalElement.textContent = `$${orderTotal.toFixed(2)}`;
-
-// Handle item removal
-document.addEventListener('click', function (e) {
-  if (e.target.classList.contains('remove-btn')) {
-    const index = e.target.dataset.index;
-    cart.splice(index, 1);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    location.reload(); 
-  }
-});
-
-// Handle address selection dynamically
-document.querySelectorAll('.shipping-selection select').forEach(select => {
-  select.addEventListener('change', updateAddressDisplay);
-});
-
-function updateAddressDisplay() {
-  const state = document.querySelector('.shipping-selection select:nth-child(1)').value;
-  const city = document.querySelector('.shipping-selection select:nth-child(2)').value;
-  const address = document.querySelector('.shipping-selection select:nth-child(3)').value;
-
-  if (state !== 'Select Shipping State' && city !== 'Select Shipping City' && address !== 'Select Shipping Address') {
-    selectedAddressElement.textContent = `${address}, ${city}, ${state}`;
-  }
-}
-
-// Handle "Submit Order" button
-document.querySelector('.submit-btn').addEventListener('click', () => {
-  if (cart.length === 0) {
-    alert("Your cart is empty. Please add items before submitting your order.");
-    return;
-  }
-
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  console.log("Total Number of Items:", totalItems);
-
-  const orderData = {
-    items: cart,
-    total: orderTotal,
-    NumberOfItems: totalItems,
-    shippingAddress: selectedAddressElement.textContent
-  };
-
-  console.log("Order Data:", orderData)
-
-  fetch('/api/submit-order', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(orderData)
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      alert(`Order submitted successfully! Order Number: ${data.orderNumber}`);
-      localStorage.removeItem('cart');
-      window.location.href = '/order-status';
-    } else {
-      alert("Oops, something went wrong. Please try again.");
+  cart.forEach((item, index) => {
+    if (!item.sku || !item.name) {
+      console.warn("Skipping item with missing SKU or name:", item);
+      return;
     }
-  })
-  .catch(() => {
-    alert("Oops, something went wrong. Please try again.");
-  });
-});
 
-// Handle "Shop More" button
-document.querySelector('.shop-btn').addEventListener('click', () => {
-  window.location.href = '/product';
+    const row = document.createElement('tr');
+    const imageUrl = productImageBaseUrl + item.sku + ".png";
+
+    let itemCustomizationFee = 0;
+    const militaryCustomizations = [
+      'Air Force', 'Marines', 'Army', 'Coast Guard', 'Space Force', 'National Guard', 'Navy'
+    ];
+
+    if (item.customization === 'Patriotic') {
+      itemCustomizationFee = 2 * item.quantity;
+    } else if (militaryCustomizations.includes(item.customization)) {
+      itemCustomizationFee = 5 * item.quantity;
+    }
+
+    const baseItemTotal = item.price * item.quantity;
+    const itemTotal = baseItemTotal + itemCustomizationFee;
+
+    itemSubtotal += baseItemTotal;
+    customizationFee += itemCustomizationFee;
+    totalItems += item.quantity;
+
+    row.innerHTML = `
+      <td class="product-info">
+        <img src="${imageUrl}" alt="${item.name}">
+        ${item.name}
+      </td>
+      <td>${item.color}</td>
+      <td>${item.customization}</td>
+      <td>${item.quantity}</td>
+      <td>$${itemTotal.toFixed(2)}</td>
+      <td>
+        <button class="edit-cart-btn" data-index="${index}">✏️</button>
+        <button class="remove-btn" data-index="${index}">🗑️</button>
+      </td>
+    `;
+
+    cartTable.appendChild(row);
+  });
+
+  const grandTotal = itemSubtotal + customizationFee;
+  document.getElementById('item-subtotal').innerText = itemSubtotal.toFixed(2);
+  document.getElementById('customization-fees').innerText = customizationFee.toFixed(2);
+  orderTotalElement.textContent = `$${grandTotal.toFixed(2)}`;
+
+  document.querySelector('.save-address-btn').addEventListener('click', () => {
+    const street = document.getElementById('shippingAddress').value.trim();
+    const city = document.getElementById('shippingCity').value.trim();
+    const state = document.getElementById('shippingState').value.trim();
+    const zip = document.getElementById('shippingZip').value.trim();
+
+    if (!street || !city || !state || !zip) {
+      alert("Please fill out all shipping fields.");
+      return;
+    }
+
+    const address = `${street}, ${city}, ${state} ${zip}`;
+    selectedAddressElement.textContent = address;
+  });
+
+  document.querySelector('.submit-btn').addEventListener('click', () => {
+    if (selectedAddressElement.textContent.trim().length < 10) {
+      alert('Please enter a valid shipping address.');
+      return;
+    }
+
+    const orderData = {
+      items: cart,
+      total: grandTotal,
+      NumberOfItems: totalItems,
+      shippingAddress: selectedAddressElement.textContent
+    };
+
+    fetch('/api/submit-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(`Order #${data.orderNumber} submitted successfully!`);
+          localStorage.removeItem('cart');
+          window.location.href = '/order-status';
+        } else {
+          alert('Failed to submit order.');
+        }
+      })
+      .catch(error => {
+        console.error('Order submission failed:', error);
+        alert('An error occurred. Please try again.');
+      });
+  });
+
+  cartTable.addEventListener('click', (e) => {
+    const index = e.target.dataset.index;
+    if (e.target.classList.contains('remove-btn')) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      location.reload();
+    }
+  });
 });

@@ -1,0 +1,67 @@
+<!-- templates/UserManagementPage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/InventoryManagementStyles.css') }}">
+</head>
+<body>
+
+  <div class="page-header">
+    <img src="{{ url_for('static', filename='images/SouthBalanceLogo.png') }}" alt="South Balance Logo" class="logo" />
+    <h1 class="page-title">South Balance User Management</h1>
+  </div>
+
+  <div class="nav-bar">
+    <a class="nav-item" href="/inventory" id="inventory-link">Inventory Overview</a>
+    <a class="nav-item" href="/order-management" id="order-management-link">Order Management</a>
+    <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
+    <a class="nav-item" href="/account" id="account-link">My Account</a>
+    <a class="nav-item" href="/" id="logout-link">Log Out</a>
+  </div>
+
+  <main class="inventory-container">
+    <div class="inventory-table-wrapper">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody id="user-management-body">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Modal for editing users -->
+  <div id="editUserModal" class="modal" style="display: none;"></div>
+
+  <script src="{{ url_for('static', filename='js/usermanagement.js') }}" defer></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const path = window.location.pathname;
+      if (path.startsWith('/inventory')) {
+        document.getElementById('inventory-link')?.classList.add('active');
+      } else if (path.startsWith('/order-management')) {
+        document.getElementById('order-management-link')?.classList.add('active');
+      } else if (path.startsWith('/user-management')) {
+        document.getElementById('user-management-link')?.classList.add('active');
+      } else if (path.startsWith('/account')) {
+        document.getElementById('account-link')?.classList.add('active');
+      }
+    });
+  </script>
+
+</body>
+</html>

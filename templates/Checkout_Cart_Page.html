@@ -63,51 +63,71 @@
         .order-summary {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            gap: 30px;
+            margin: 30px auto;
             width: 80%;
-            margin-top: 20px;
         }
 
-        .shipping-selection {
+        .shipping-form {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             display: flex;
+            flex-direction: column;
             gap: 10px;
+            width: 350px; /* control width */
         }
 
-        select {
-            font-size: 16px;
+        .shipping-form label {
+            font-weight: bold;
+        }
+
+        .shipping-form input {
             padding: 8px;
-            border-radius: 5px;
+            font-size: 14px;
+            border-radius: 4px;
             border: 1px solid var(--border-gray);
+        }
+
+        .save-address-btn {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
         }
 
         .order-total-box {
             background: var(--card-bg);
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 350px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 300px;
+            min-width: 250px;
             text-align: center;
         }
 
         .order-total-box h3 {
-            margin: 5px 0;
-            font-size: 18px;
+            margin-bottom: 10px;
         }
 
         .button-container {
             display: flex;
-            justify-content: flex-end; 
-            width: 80%;
+            justify-content: center;
+            gap: 10px;
             margin-top: 20px;
         }
 
         .cart-btn {
-            font-size: 18px;
-            padding: 10px 20px;
+            font-size: 16px;
+            padding: 8px 20px;
             border-radius: 5px;
             border: none;
             cursor: pointer;
-            margin-left: 10px; 
         }
 
         .shop-btn {
@@ -119,6 +139,83 @@
             background-color: var(--primary-green);
             color: white;
         }
+
+        /* Modal Styling */
+        #editCartModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.5);
+            display: none; /* default hidden */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* show when adding .show */
+        #editCartModal.show {
+            display: flex; 
+        }
+
+        /* Modal Content Styling */
+        .modal-content {
+            background: var(--card-bg);
+            padding: 20px 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+
+
+        /* Close button styling */
+        #editCartModal .close-edit {
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Form elements inside modal */
+        #editCartModal label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+
+        #editCartModal select,
+        #editCartModal input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid var(--border-gray);
+            box-sizing: border-box;
+        }
+
+        /* Save button */
+        #saveEditCartBtn {
+            width: 100%;
+            background-color: var(--primary-green);
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* Hover style Save Edit Cart Button */
+        #saveEditCartBtn:hover {
+            background-color: #1a4534;
+        }
     </style>
 </head>
 <body>
@@ -127,13 +224,13 @@
         <h1 class="page-title">My Cart</h1>
     </header>
 
-    <nav class="nav-bar">
+    <div class="nav-bar">
         <a class="nav-item" href="/product">Products</a>
         <a class="nav-item" href="/cart">Cart</a>
         <a class="nav-item" href="/order-status">Orders</a>
         <a class="nav-item" href="/account">My Account</a>
-        <a class="nav-item" href="#">Log Out</a>
-    </nav>
+        <a class="nav-item" href="/">Log Out</a>
+    </div>
 
     <main class="cart-container">
         <table class="cart-table">
@@ -144,28 +241,81 @@
                     <th>Customization</th>
                     <th>Quantity</th>
                     <th>Price</th>
-                    <th>Remove</th>
+                    <th></th>
                 </tr>
             </thead>
-            <tbody id="cart-items"></tbody>
+            <tbody id="cart-table-body"></tbody>
+
         </table>
 
         <div class="order-summary">
-            <div class="shipping-selection">
-                <select><option>Select Shipping State</option></select>
-                <select><option>Select Shipping City</option></select>
-                <select><option>Select Shipping Address</option></select>
-            </div>
-            <div class="order-total-box">
-                <h3>Order Total: <span id="order-total">$0.00</span></h3>
-                <p>Selected Delivery Address:</p>
-            </div>
-        </div>
+            <div class="shipping-form">
+              <label for="shippingAddress">Street Address:</label>
+              <input type="text" id="shippingAddress" placeholder="1039 Broadway St" required>
+          
+              <label for="shippingCity">City:</label>
+              <input type="text" id="shippingCity" placeholder="New Orleans" required>
+          
+              <label for="shippingState">State:</label>
+              <input type="text" id="shippingState" placeholder="LA" required>
+          
+              <label for="shippingZip">ZIP Code:</label>
+              <input type="text" id="shippingZip" placeholder="70118" required>
+          
+              <button type="button" class="save-address-btn">Save Address</button>
 
-        <div class="button-container">
-            <button class="cart-btn shop-btn">Shop More</button>
-            <button class="cart-btn submit-btn">Submit Order</button>
-        </div>
+            </div>
+          
+            <div class="order-total-box">
+                <h3>Item Subtotal: $<span id="item-subtotal">0.00</span></h3>
+                <h3>Customization Fees: $<span id="customization-fees">0.00</span></h3>
+                <h2>Order Total: $<span id="order-total">0.00</span></h2>
+                <p class="address-output">Selected Delivery Address:</p>
+              
+                <div class="button-container">
+                  <button class="cart-btn shop-btn">Shop More</button>
+                  <button class="cart-btn submit-btn">Submit Order</button>
+                </div>
+              </div>
+              
+          </div>
+          
+
+
+          
+
+        <div id="editCartModal" class="modal">
+            <div class="modal-content">
+              <span class="close-edit">&times;</span>
+              <h2>Edit Cart Item</h2>
+          
+              <label>Color:</label>
+              <select id="editColor">
+                <!-- Populated via JS -->
+              </select>
+          
+              <label>Customization:</label>
+              <select id="editCustomization">
+                <option value="">Customize</option>
+                <option>Air Force</option>
+                <option>Marines</option>
+                <option>Army</option>
+                <option>Coast Guard</option>
+                <option>Space Force</option>
+                <option>National Guard</option>
+                <option>Navy</option>
+                <option>Patriotic</option>
+              </select>
+          
+              <label>Quantity:</label>
+              <input type="number" id="editQuantity" min="1">
+          
+              <button id="saveEditCartBtn">Save Changes</button>
+            </div>
+          </div>
+
+          
+          
     </main>
     <script src="static/js/cart.js"></script>
 </body>

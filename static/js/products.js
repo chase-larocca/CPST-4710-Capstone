@@ -38,7 +38,7 @@ fetch('/api/products')
       </select>
       <input type="number" placeholder="QTY" class="qty-field" />
     </div>
-    <button class="add-to-cart-btn">Add to Cart</button>
+    <button class="add-to-cart-btn" data-colors='${JSON.stringify(product.Colors ?? [])}'>Add to Cart</button>
   </div>
 `;
 
@@ -51,35 +51,40 @@ fetch('/api/products')
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 document.addEventListener('click', function (event) {
-    if (event.target.classList.contains('add-to-cart-btn')) {
-      const card = event.target.closest('.product-card');
+  if (event.target.classList.contains('add-to-cart-btn')) {
+    const card = event.target.closest('.product-card');
+    const name = card.querySelector('.product-name')?.textContent;
+    const price = parseFloat(card.querySelector('.product-price')?.textContent.replace('$', ''));
+    const color = card.querySelector('.color-select')?.value;
+    const customization = card.querySelector('.customization-select')?.value;
+    const quantity = parseInt(card.querySelector('.qty-field')?.value || 0);
+    const availableColors = JSON.parse(event.target.dataset.colors || "[]");
+    const sku = card.querySelector('.product-sku')?.textContent.trim();  // grab SKU
 
-  //    const name = card.querySelector('.product-name')?.textContent;
- //     const price = parseFloat(card.querySelector('.product-price')?.textContent.replace('$', '') || 0);
-  //    const color = card.querySelector('.color-select')?.value;
-  //    const customization = card.querySelector('.customization-select')?.value;
-     const quantity = parseInt(card.querySelector('.qty-field')?.value || 0);
-  
-      if (!quantity || quantity <= 0) {
-        alert("Please enter a valid quantity.");
-        return;
-      }
 
-      const item = {
-        SKU: card.querySelector('.product-sku')?.textContent,  
-        name: card.querySelector('.product-name')?.textContent,
-        price: parseFloat(card.querySelector('.product-price')?.textContent.replace('$', '')),
-        color: card.querySelector('.color-select')?.value,
-        customization: card.querySelector('.customization-select')?.value,
-        quantity
-      };
-      
-  
-      cart.push(item);
-      localStorage.setItem('cart', JSON.stringify(cart));
-  
-      alert(`${quantity} of "${name}" added to cart!`);
-      console.log(JSON.parse(localStorage.getItem('cart')));
+    if (!quantity || quantity <= 0) {
+      alert("Please enter a valid quantity.");
+      return;
     }
-  });
+
+    const item = {
+      name,
+      price,
+      sku,
+      color,
+      customization,
+      quantity,
+      availableColors 
+    };
+
+    cart.push(item);
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    alert(`${quantity} of "${name}" added to cart!`);
+    console.log(JSON.parse(localStorage.getItem('cart')));
+  }
+});
+
+
+  
   
