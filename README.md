@@ -15,7 +15,7 @@ Libraries:
 - wekzeug (Password hashing library)
 - re (Searching/text patterns)
 -----------------------------------------------------------------------------------------
-MySQL Configuration
+MySQL Configuration:
 
 The database is a core element that facilitates the population of many of the tables and is critical for user login. Within the MAIN branch, the team has created an SQL folder within the project files.
 Inside the SQL folder, there are prewritten files to deploy the tables and databases required for the backend code to run. Please review each file individually and execute the code to create the tables and stored procedures. 
