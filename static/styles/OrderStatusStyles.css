@@ -81,9 +81,9 @@
         width: 100vw;
         height: 100vh;
         background: rgba(0, 0, 0, 0.5); /* dim background */
-        display: none; /* hidden by default */
-        justify-content: center; /* centers content horizontally */
-        align-items: center; /* centers content vertically */
+        display: none; 
+        justify-content: center; 
+        align-items: center; 
         z-index: 1000;
     }
     
@@ -95,7 +95,7 @@
         min-width: 500px;
         max-width: 90%;
         box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        position: relative; /* for X button */
+        position: relative; 
         text-align: center;
     }
     
