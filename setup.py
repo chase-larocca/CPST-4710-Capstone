@@ -261,13 +261,20 @@ try:
                 cursor.execute(command)
                 time.sleep(0.1)
 
+
         cursor.execute(f"USE {db_name}")
         print("\nCreating stored procedures...")
 
         for proc in stored_procedures:
-            for _ in cursor.execute(proc, multi=True):
-                pass  # ensures all statements in multi-line block are processed
-            time.sleep(0.1)
+            try:
+                connection.cmd_query(proc)
+                connection._cmysql.next_result()  
+                time.sleep(0.1)
+            except Error as e:
+                print(f"Failed to create procedure: {e}")
+
+
+
 
 
         connection.commit()
