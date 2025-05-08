@@ -6,10 +6,10 @@ import time
 
 print("=== South Balance MySQL Setup Utility ===")
 
-host = "localhost"
-port = "3306"
-user = "root"
-password = "Dr3amC0ount3r$"
+host = input("Enter MySQL host (default 'localhost'): ") or "localhost"
+port = input("Enter MySQL port (default '3306'): ") or "3306"
+user = input("Enter MySQL username (default 'root'): ") or "root"
+password = input("Enter MySQL password (default 'Dr3amC0ount3r$'): ") or "Dr3amC0ount3r$"
 db_name = "ttops"
 
 schema_commands = [
