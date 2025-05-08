@@ -6,7 +6,7 @@
     <title>Sign In</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/SignupStyles.css') }}">
+  <!--<link rel="stylesheet" href="{{ url_for('static', filename='styles/SignupStyles.css') }}">--> 
     <style>
         body {
             background-color: var(--page-bg);
@@ -91,7 +91,8 @@
     </header>
 
     <nav class="nav-bar">
-        
+
+        <a href="/signup"  id="signup" class="nav-item">Signup</a>
         <a href="#"  id="forgot-password-link" class="nav-item">Forgot Password</a>
         <script src="{{ url_for('static', filename='js/forgotpassword.js') }}"></script>
     </nav>
@@ -117,6 +118,17 @@
 
             </form>
         </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+
 
         
 

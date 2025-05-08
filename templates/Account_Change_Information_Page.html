@@ -68,13 +68,7 @@
         <h1 class="page-title">My Account</h1>
     </header>
 
-    <div class="nav-bar">
-        <a class="nav-item" href="/product">Products</a>
-        <a class="nav-item" href="/cart">Cart</a>
-        <a class="nav-item" href="/order-status">Orders</a>
-        <a class="nav-item" href="/account">My Account</a>
-        <a class="nav-item" href="/">Log Out</a>
-      </div>
+    {% include '/navbar.html' %}
 
     <main class="account-container">
         <div class="account-content">
@@ -90,20 +84,20 @@
             
             <form method="POST" action="{{ url_for('account') }}">
                 <div class="form-group">
-                    <label for="username">Email:</label>
-                    <input type="text" id="username" name="username" placeholder="Enter New Username" required>
+                    <label for="username">Current Email:</label>
+                    <input type="text" id="username" name="username" placeholder="Enter Current Email" value="{{ email }}" required>
                 </div>
                 <div class="form-group">
                     <label for="email">New Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Enter New Email" required>
+                    <input type="email" id="email" name="email" placeholder="Enter New Email"required>
                 </div>
                 <div class="form-group">
                     <label for="new-password">New Password:</label>
-                    <input type="password" id="new-password" name="new-password">
+                    <input type="password" id="new-password" name="new-password" placeholder="Enter new password">
                 </div>
                 <div class="form-group">
                     <label for="confirm-password">Confirm Password:</label>
-                    <input type="password" id="confirm-password" name="confirm-password">
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm new passsword">
                 </div>
                 <div class="button-container">
                     <a href="{{ url_for('product_page') }}" class="cancel-btn">Cancel</a>

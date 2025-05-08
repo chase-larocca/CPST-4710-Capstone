@@ -16,10 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${user.Role}</td>
             <td>
               <div class="user-actions">
-                <button class="edit-btn" data-id="${user.UserID}">Edit</button>
+                <button class="edit-user" data-id="${user.UserID}">Edit</button>
                 <button class="delete-btn" data-id="${user.UserID}">Delete</button>
               </div>
             </td>
+
+
 
 
           `;
@@ -139,73 +141,71 @@ document.addEventListener('DOMContentLoaded', () => {
   
   
   function attachUserEditHandlers(users) {
-    document.querySelectorAll('.edit-btn').forEach(btn => {
+    document.querySelectorAll('.edit-user').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.dataset.id;
         const user = users.find(u => u.UserID == id);
   
+        if (!user) return;
+  
+        // Populate fields in the existing modal
+        document.getElementById('edit-firstname').value = user.FirstName;
+        document.getElementById('edit-lastname').value = user.LastName;
+        document.getElementById('edit-email').value = user.Email;
+        document.getElementById('edit-username').value = user.Username || "" ;
+        document.getElementById('edit-role').value = user.Role;
+        document.getElementById('edit-userid').value = user.UserID;
+  
+        // Show modal
         const modal = document.getElementById('editUserModal');
-        modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-button" id="closeModal">&times;</span>
-            <h2>Edit User #${user.UserID}</h2>
-
-            <label>First Name:</label>
-            <input type="text" id="edit-firstname" value="${user.FirstName}" />
-
-            <label>Last Name:</label>
-            <input type="text" id="edit-lastname" value="${user.LastName}" />
-
-            <label>Email:</label>
-            <input type="email" id="edit-email" value="${user.Email}" />
-
-            <label>Role:</label>
-            <select id="edit-role">
-            <option${user.Role === 'Customer' ? ' selected' : ''}>Customer</option>
-            <option${user.Role === 'Employee' ? ' selected' : ''}>Employee</option>
-            <option${user.Role === 'Admin' ? ' selected' : ''}>Admin</option>
-            </select>
-
-            <button id="update-user-btn">Save Changes</button>
-        </div>
-        `;
-
-  
         modal.style.display = 'flex';
+      });
+    });
   
-        document.getElementById('closeModal').onclick = () => modal.style.display = 'none';
+    // Attach modal close logic
+    document.querySelector('.close-edit-user')?.addEventListener('click', () => {
+      document.getElementById('editUserModal').style.display = 'none';
+    });
   
-        document.getElementById('update-user-btn').onclick = () => {
-          const updatedUser = {
-            UserID: user.UserID,
-            FirstName: document.getElementById('edit-firstname').value,
-            LastName: document.getElementById('edit-lastname').value,
-            Email: document.getElementById('edit-email').value,
-            Role: document.getElementById('edit-role').value
-          };
+    window.addEventListener('click', (e) => {
+      if (e.target === document.getElementById('editUserModal')) {
+        document.getElementById('editUserModal').style.display = 'none';
+      }
+    });
   
-          fetch('/api/admin/users/update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedUser)
-          })
-          .then(res => res.json())
-          .then(data => {
-            if (data.success) {
-              showToast("User updated successfully.");
-              modal.style.display = 'none';
-              setTimeout(() => location.reload(), 1000); // Let toast show
-            } else {
-              showToast("Failed to update user.", 3000, 'error');
-            }
-          })
-          .catch(err => {
-            console.error('Update failed:', err);
-            showToast("An error occurred while updating.", 3000, 'error');
-          });
-          
-        };
+    // Form submit handler
+    document.getElementById('editUserForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+  
+      const updatedUser = {
+        UserID: document.getElementById('edit-userid').value,
+        FirstName: document.getElementById('edit-firstname').value,
+        LastName: document.getElementById('edit-lastname').value,
+        Email: document.getElementById('edit-email').value,
+        Username: document.getElementById('edit-username').value,
+        Role: document.getElementById('edit-role').value
+      };
+  
+      fetch('/api/admin/users/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedUser)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showToast("User updated successfully.");
+          document.getElementById('editUserModal').style.display = 'none';
+          setTimeout(() => location.reload(), 1000);
+        } else {
+          showToast("Failed to update user.", 3000, 'error');
+        }
+      })
+      .catch(err => {
+        console.error('Update failed:', err);
+        showToast("An error occurred while updating.", 3000, 'error');
       });
     });
   }
+  
   

@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>User Management</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/InventoryManagementStyles.css') }}">
 </head>
 <body>
@@ -14,15 +12,8 @@
     <h1 class="page-title">South Balance User Management</h1>
   </div>
 
-  <div class="nav-bar">
-    <a class="nav-item" href="/inventory" id="inventory-link">Inventory Overview</a>
-    <a class="nav-item" href="/order-management" id="order-management-link">Order Management</a>
-    <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
-    <a class="nav-item" href="/account" id="account-link">My Account</a>
-    <a class="nav-item" href="/" id="logout-link">Log Out</a>
-  </div>
+  {% include '/navbar.html' %}
 
-  
   <main class="inventory-container">
 
     <div class="add-user-wrapper">
@@ -50,42 +41,105 @@
   </main>
 
   <!-- Modal for editing users -->
-  <div id="editUserModal" class="modal" style="display: none;"></div>
+  <div id="editUserModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close-edit-user" style="float:right;cursor:pointer;">&times;</span>
+  
+      <form class="modal-grid-two-col" id="editUserForm" style="width: 100%;">
+        <h2 style="grid-column: 1 / -1; text-align: center;">Edit User</h2>
+      
+        <div>
+          <label for="edit-firstname">First Name:</label>
+          <input type="text" id="edit-firstname" required />
+        </div>
+        <div>
+          <label for="edit-lastname">Last Name:</label>
+          <input type="text" id="edit-lastname" required />
+        </div>
+        <div>
+          <label for="edit-email">Email:</label>
+          <input type="email" id="edit-email" required />
+        </div>
+        <div>
+          <label for="edit-username">Username:</label>
+          <input type="text" id="edit-username" required />
+        </div>
+        <div>
+          <label for="edit-role">Role:</label>
+          <select id="edit-role" required>
+            <option>Employee</option>
+            <option>Customer</option>
+            <option>Admin</option>
+          </select>
+        </div>
+      
+        <div></div> <!-- filler for grid balance -->
+        <input type="hidden" id="edit-userid" />
+      
+        <div style="grid-column: 1 / -1; text-align: right; margin-top: 10px;">
+          <button type="submit" id="submitEditUserBtn" class="green-button">Update User</button>
+        </div>
+      </form>
+      
+      
+    </div>
+  </div>
+  
 
-  <!-- Add User Modal -->
   <div id="addUserModal" class="modal" style="display:none;">
     <div class="modal-content">
       <span class="close-add-user" style="float:right;cursor:pointer;">&times;</span>
-      <h2>Add New User</h2>
+  
+      <form class="modal-grid-two-col" id="addUserForm" style="width: 100%;">
+        <h2 style="grid-column: 1 / -1; text-align: center; margin-top: 0; margin-bottom: 16px;">
+          Add New User
+        </h2>
 
-      <label>First Name:</label>
-      <input type="text" id="new-firstname">
-
-      <label>Last Name:</label>
-      <input type="text" id="new-lastname">
-
-      <label>Email:</label>
-      <input type="email" id="new-email">
-
-      <label>Username:</label>
-      <input type="text" id="new-username">
-
-      <label>Password:</label>
-      <input type="password" id="new-password">
-
-      <label>Confirm Password:</label>
-      <input type="password" id="confirm-password">
-
-      <label>Role:</label>
-      <select id="new-role">
-        <option>Employee</option>
-        <option>Customer</option>
-        <option>Admin</option>
-      </select>
-
-      <button id="submitNewUserBtn">Create User</button>
+        <div>
+          <label for="new-firstname">First Name:</label>
+          <input type="text" id="new-firstname" required>
+        </div>
+        <div>
+          <label for="new-lastname">Last Name:</label>
+          <input type="text" id="new-lastname" required>
+        </div>
+        <div>
+          <label for="new-email">Email:</label>
+          <input type="email" id="new-email" required>
+        </div>
+        <div>
+          <label for="new-username">Username:</label>
+          <input type="text" id="new-username" required>
+        </div>
+        <div>
+          <label for="new-password">Password:</label>
+          <input type="password" id="new-password" required>
+        </div>
+        <div>
+          <label for="confirm-password">Confirm Password:</label>
+          <input type="password" id="confirm-password" required>
+        </div>
+        <div>
+          <label for="new-role">Role:</label>
+          <select id="new-role" required>
+            <option>Employee</option>
+            <option>Customer</option>
+            <option>Admin</option>
+          </select>
+        </div>
+  
+        <!-- Add empty div to keep grid aligned -->
+        <div></div>
+  
+        <!-- Full width submit button row -->
+        <div style="grid-column: 1 / -1; text-align: right; margin-top: 10px;">
+          <button type="submit" id="submitNewUserBtn" class="green-button">Create User</button>
+        </div>
+      </form>
     </div>
   </div>
+  
+  
 
 
 

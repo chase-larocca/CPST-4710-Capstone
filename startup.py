@@ -3,13 +3,14 @@ from mysql.connector import Error
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, Blueprint
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
-from Python.Order_SP_Handler import order_blueprint  
+from werkzeug.exceptions import NotFound, HTTPException
+#from Python.Order_SP_Handler import order_blueprint  
 import re
 
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = 'a4f3e86de5f241f6b9112f882eecf1a3'
 
-app.register_blueprint(order_blueprint)
+#app.register_blueprint(order_blueprint)
 
 # Function for passwordc validation 
 def is_valid_password(password):
@@ -29,16 +30,11 @@ def connect_to_mysql():
             database="TTOps"
         )
         if connection.is_connected():
-            print("Connected to MySQL database")
+            print("Connection to TTOps initiated -- Success")
             return connection
     except Error as e:
         print(f"Error: {e}")
         return None
-
-
-@app.route('/debug-alive')
-def debug_alive():
-    return "✅ This is the correct startup.py"
 
 # Home Page (starting page)
 @app.route('/')
@@ -142,6 +138,7 @@ def signup():
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
         email = request.form.get("email")
+        username = request.form.get("username")
         password = request.form.get("password")
         confirm_password = request.form.get("confirm_password")
 
@@ -150,8 +147,10 @@ def signup():
 
         if password != confirm_password:
             return render_template("Account_Signup_Page.html", error="Passwords do not match.")
+        
         if not is_valid_password(password):
             return render_template("Account_Signup_Page.html", error="Password must be at least 7 characters long, include a number and a special character.")
+        
         connection = connect_to_mysql()
         if not connection:
             return render_template("Account_Signup_Page.html", error="Database connection failed.")
@@ -159,37 +158,41 @@ def signup():
         try:
             cursor = connection.cursor()
             # Check if email is already taken
-            cursor.execute("SELECT * FROM Users WHERE Email=%s", (email,))
+            cursor.execute("SELECT * FROM Users WHERE Email=%s OR Username=%s", (email, username))
             if cursor.fetchone():
-                return render_template("Account_Signup_Page.html", error="Email already registered.")
+                return render_template("Account_Signup_Page.html", error="Email or username already registered.")
 
-            # Insert new user
-            cursor.callproc("sp_Users_CreateOrUpdate", (
-                None,  
-                first_name,
-                last_name,
-                email,
-                password,  
-                "Customer"
-            ))
+            # Hash password
+            password_hash = generate_password_hash(password)
+
+            cursor.callproc("sp_SignupUser", (first_name, last_name, email, username, password_hash))
             connection.commit()
+
             return redirect(url_for("login"))
+        
         except Error as e:
             import traceback
-            traceback.print_exc()
+            traceback.print_exec()
             return render_template("Account_Signup_Page.html", error=f"Signup failed: {str(e)}")
+        
         finally:
             cursor.close()
             connection.close()
-    else:
-        return render_template("Account_Signup_Page.html")
+
+    return render_template("Account_Signup_page.html")
+            
 
 @app.route('/inventory')
 def inventory():
     if 'user_id' not in session or session.get('role') not in ['Employee', 'Admin']:
         flash("Access Denied.", "error")
         return redirect(url_for('login'))
-    return render_template('InventoryManagementPage.html')
+
+    return render_template(
+        'InventoryManagementPage.html',
+        nav_context='admin',  
+        role=session.get('role')
+    )
 
 
 @app.route('/api/inventory/delete/<string:sku>', methods=['DELETE'])
@@ -214,12 +217,12 @@ def delete_inventory_item(sku):
 # Product Page
 @app.route('/product')
 def product_page():
-    return render_template('ProductPage.html')
+    return render_template('ProductPage.html', nav_context="customer")
 
 # Cart Page
 @app.route("/cart")
 def cart():
-    return render_template("Checkout_Cart_Page.html")
+    return render_template("Checkout_Cart_Page.html", nav_context="customer")
 
 
 
@@ -230,7 +233,7 @@ def order_status():
         flash("You must be logged in to view orders.", "error")
         return redirect(url_for('login'))
     
-    return render_template('OrderStatusPage.html')
+    return render_template('OrderStatusPage.html', nav_context="customer")
 
 @app.route("/api/submit-order", methods=["POST"])
 def submit_order():
@@ -251,7 +254,7 @@ def submit_order():
         shipping_address = data.get('shippingAddress', 'None')
         number_of_items = data.get('NumberOfItems', 0)
 
-        # 🔍 Step 1: Get real CustomerID
+        # Get real CustomerID
         cursor.execute("SELECT CustomerID FROM Customers WHERE CustomerID = %s", (user_id,))
         customer = cursor.fetchone()
 
@@ -261,7 +264,7 @@ def submit_order():
 
         customer_id = customer['CustomerID']
 
-        # ✅ Step 2: Check inventory levels for each item
+        # Check inventory levels for each item
         for item in order_items:
             sku = item.get('sku')
             quantity_ordered = item.get('quantity', 0)
@@ -275,7 +278,7 @@ def submit_order():
                     "error": f"Not enough stock for SKU: {sku}. Available: {result['QuantityInStock'] if result else 0}"
                 }), 400
 
-        # ✅ Step 3: Insert into Orders
+        # Insert into Orders
         insert_query = """
             INSERT INTO Orders (CustomerID, ShippingDestination, NumberOfItems, TotalPrice, OrderStatus)
             VALUES (%s, %s, %s, %s, 'Pending')
@@ -285,7 +288,7 @@ def submit_order():
 
         order_id = cursor.lastrowid
 
-        # ✅ Step 4: Insert each item into OrderItems and update Inventory
+        # Insert each item into OrderItems and update Inventory
         for item in order_items:
             sku = item.get('sku')
             name = item.get('name')
@@ -397,7 +400,13 @@ def order_management():
     if 'user_id' not in session or session.get('role') not in ['Employee', 'Admin']:
         flash("Access Denied.", "error")
         return redirect(url_for('login'))
-    return render_template('OrderManagementPage.html')
+
+    return render_template(
+        'OrderManagementPage.html',
+        nav_context='admin',  
+        role=session.get('role')
+    )
+
 
 
 @app.route('/api/admin/orders')
@@ -460,7 +469,13 @@ def user_management():
     if 'user_id' not in session or session.get('role') != 'Admin':
         flash("Access Denied.", "error")
         return redirect(url_for('login'))
-    return render_template('UserManagementPage.html')
+
+    return render_template(
+        'UserManagementPage.html',
+        nav_context='admin',
+        role=session.get('role')
+    )
+
 
 
 
@@ -473,7 +488,7 @@ def get_all_users_admin():
     try:
         cursor = connection.cursor(dictionary=True)
         query = """
-            SELECT UserID, FirstName, LastName, Email, Role
+            SELECT UserID, Username, FirstName, LastName, Email, Role
             FROM Users
             ORDER BY LastName ASC
         """
@@ -585,6 +600,8 @@ def add_user_admin():
 # Changing Account Information
 @app.route('/account', methods=["GET", "POST"])
 def account():
+    nav_context = request.args.get("context", "customer")
+
     if request.method == "POST":
         username = request.form.get("username")
         email = request.form.get("email")
@@ -593,30 +610,81 @@ def account():
 
         if new_password and new_password != confirm_password:
             flash("The entered passwords do not match. Please try again.", "error")
-            return redirect(url_for('account'))
+            return redirect(url_for('account', context=nav_context))  # preserve context in redirect
 
         connection = connect_to_mysql()
         if connection:
             cursor = connection.cursor()
 
-            # Ensure username and email are unique (except for the current user)
-            cursor.execute("SELECT * FROM Users WHERE (username=%s OR email=%s) AND id!=%s", 
-                           (username, email, 1))  # Replace `1` with the session user ID
+            user_id = session.get('user_id')
+            if not user_id:
+                flash("You must be logged in to update your account.", "error")
+                return redirect(url_for('login'))
+
+            # Check for duplicate username/email (excluding current logged user)
+            cursor.execute("""
+                SELECT * FROM Users
+                WHERE (Username=%s OR Email=%s) AND UserID != %s
+            """, (username, email, user_id))
             existing_user = cursor.fetchone()
 
             if existing_user:
                 flash("Username or email is already in use.", "error")
             else:
-                update_query = "UPDATE Users SET username=%s, email=%s, password=%s WHERE id=%s"
-                cursor.execute(update_query, (username, email, new_password, 1))  # Replace `1` with session user ID
+                if new_password:
+                    password_hash = generate_password_hash(new_password)
+                    cursor.execute("""
+                        UPDATE Users SET Username=%s, Email=%s, PasswordHash=%s
+                        WHERE UserID=%s
+                    """, (username, email, password_hash, user_id))
+                else:
+                    cursor.execute("""
+                        UPDATE Users SET Username=%s, Email=%s
+                        WHERE UserID=%s
+                    """, (username, email, user_id))
+
                 connection.commit()
                 flash("Account updated successfully!", "success")
 
+            cursor.close()
             connection.close()
 
-    return render_template('Account_Change_Information_Page.html')
+        # Always re-render with nav_context after POST
+        return render_template('Account_Change_Information_Page.html',
+                               username=username,
+                               email=email,
+                               role=session.get('role'),
+                               nav_context=nav_context)
 
-# Flask route to return inventory as JSON
+    else:
+        user_id = session.get('user_id')
+        if not user_id:
+            flash("You must be logged in to view this page.", "error")
+            return redirect(url_for('login'))
+
+        connection = connect_to_mysql()
+        if connection:
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute("SELECT Username, Email FROM Users WHERE UserID = %s", (user_id,))
+            user = cursor.fetchone()
+            cursor.close()
+            connection.close()
+
+            if user:
+                return render_template('Account_Change_Information_Page.html',
+                                       username=user['Username'],
+                                       email=user['Email'],
+                                       role=session.get('role'),
+                                       nav_context=nav_context)
+
+        flash("Failed to load account information.", "error")
+        return redirect(url_for('home'))
+    
+@app.context_processor
+def inject_user_role():
+    return dict(role=session.get('role'))
+
+
 @app.route("/api/products", methods=["GET"])
 def get_inventory_items():
     connection = connect_to_mysql()
@@ -625,32 +693,50 @@ def get_inventory_items():
 
     try:
         cursor = connection.cursor(dictionary=True)
-        cursor.callproc("sp_InventoryWithColors")
+        cursor.execute("""
+            SELECT 
+                i.SKU,
+                i.ItemName,
+                i.ItemDescription,
+                i.Supplier,
+                i.Price,
+                i.QuantityInStock,
+                i.RestockThreshold,
+                GROUP_CONCAT(ic.ColorName) AS AvailableColors
+            FROM Inventory i
+            LEFT JOIN InventoryColors ic ON i.SKU = ic.SKU
+            GROUP BY i.SKU
+        """)
 
+        rows = cursor.fetchall()
         products = {}
 
-        for result in cursor.stored_results():
-            for row in result.fetchall():
-                sku = row['SKU']
-                if sku not in products:
-                    products[sku] = {
-                        'SKU': sku,
-                        'ItemName': row['ItemName'],
-                        'ItemDescription': row['ItemDescription'],
-                        'Price': row['Price'],
-                        'QuantityInStock': row['QuantityInStock'],
-                        'Supplier': row['Supplier'],
-                        'RestockThreshold': row['RestockThreshold'],
-                        'Colors': []  
-                    }
-                if row['ColorName']:
-                    products[sku]['Colors'].append(row['ColorName'])
+        for row in rows:
+            sku = row['SKU']
+            if sku not in products:
+                products[sku] = {
+                    'SKU': sku,
+                    'ItemName': row.get('ItemName'),
+                    'ItemDescription': row.get('ItemDescription'),
+                    'Price': row.get('Price'),
+                    'QuantityInStock': row.get('QuantityInStock'),
+                    'Supplier': row.get('Supplier'),
+                    'RestockThreshold': row.get('RestockThreshold'),
+                    'Colors': []
+                }
+
+            if 'AvailableColors' in row and row['AvailableColors']:
+                if not products[sku]['Colors']:
+                    products[sku]['Colors'] = row['AvailableColors'].split(',')
 
         return jsonify(list(products.values()))
-    
+
+
     except Error as e:
         import traceback
-        traceback.print_exc()  
+        traceback.print_exc()
+        print(f"Returning {len(products)} products", flush=True)
+
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
@@ -700,45 +786,56 @@ def get_colors():
 @app.route('/api/orders')
 def get_orders():
     if 'user_id' not in session:
+        print("!!! ERROR: No user_id in session", flush=True)
         return jsonify({"error": "User not logged in"}), 403
 
     connection = connect_to_mysql()
     if not connection:
+        print("!!!! ERROR: Failed DB connection", flush=True)
         return jsonify({"error": "Database connection failed"}), 500
 
     try:
-        user_id = session['user_id']
+        user_id = session.get('user_id')
+        if not user_id:
+            print("!!! ERROR: Session does not contain 'user_id'", flush=True)
+            return jsonify({"error": "User not logged in"}), 403
+
+
         cursor = connection.cursor(dictionary=True)
 
-        # ✅ Restrict by customer ID
+        # Find customer record
+        cursor.execute("SELECT CustomerID FROM Customers WHERE CustomerID = %s", (user_id,))
+        customer = cursor.fetchone()
+        print(f"--- INFORMATION: Customer fetch: {customer}", flush=True)
+
+        if not customer:
+            print("--- INFORMATION: No customer record found for user_id", flush=True)
+            return jsonify([])  # Don't crash
+
+        customer_id = customer['CustomerID']
+        print(f"--- INFORMATION: Using customer_id: {customer_id}", flush=True)
+
+        # Fetch orders for customer
         cursor.execute("""
             SELECT o.OrderID, o.ShippingDestination, o.NumberOfItems, o.TotalPrice, o.OrderStatus
             FROM Orders o
             WHERE o.CustomerID = %s
             ORDER BY o.OrderDate DESC
-        """, (user_id,))
-
-        print(user_id)
+        """, (customer_id,))
 
         orders = cursor.fetchall()
-        print(f"[DEBUG] Found {len(orders)} orders for user_id {user_id}")  # <- ✅ MUST SEE THIS
-
+        print(f"--- SUCCESS: Retrieved {len(orders)} orders.", flush=True)
         return jsonify(orders)
 
-    except Error as e:
-        print("Order retrieval error:", e)
+    except Exception as e:
+        import traceback
+        print("ERROR: EXCEPTION IN /api/orders", flush=True)
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+
     finally:
         cursor.close()
         connection.close()
-
-@app.route('/debug/session')
-def debug_session():
-    return jsonify({
-        "user_id": session.get('user_id'),
-        "role": session.get('role')
-    })
-
 
 # To deal with forget password button on sign up page
 @app.route("/api/forgot-password", methods=["POST"])
@@ -775,6 +872,40 @@ def forgot_password():
     finally:
         cursor.close()
         connection.close()
+    
+@app.route('/debug-alive')
+def debug_alive():
+    return "This is the correct startup.py"
+
+@app.route("/debug/confirm-orders-route")
+def debug_confirm_orders_route():
+    print("CONFIRM: /api/orders route is reachable", flush=True)
+    return "Route is active"
+
+@app.route("/debug/session")
+def debug_session():
+    print("Debugging session:", dict(session), flush=True)
+    return jsonify({
+        "user_id": session.get("user_id"),
+        "role": session.get("role")
+})
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Flask handle 404s normally 
+    if isinstance(e, NotFound):
+        return e
+    
+    # Return standard HTTP with JSON response
+    if isinstance(e, HTTPException):
+        
+        return jsonify({"error": e.description}), e.code
+
+    # Log and return server errors (non-HTTP)
+    import traceback
+    print("Global Flask Exception Caught", flush=True)
+    traceback.print_exc()
+    return jsonify({"error": "Internal Server Error"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=5055)

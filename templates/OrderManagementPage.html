@@ -3,8 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Order Management</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/InventoryManagementStyles.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/OrderManagementStyles.css') }}">
 </head>
@@ -15,16 +13,7 @@
     <h1 class="page-title">South Balance Order Management</h1>
   </div>
 
-  <div class="nav-bar">
-    <a class="nav-item" href="/inventory" id="inventory-link">Inventory Overview</a>
-    <a class="nav-item" href="/order-management" id="order-management-link">Order Management</a>
-    {% if session.get('role') == 'Admin' %}
-      <a class="nav-item" href="/user-management" id="user-management-link">User Management</a>
-    {% endif %}
-
-    <a class="nav-item" href="/account" id="account-link">My Account</a>
-    <a class="nav-item" href="/" id="logout-link">Log Out</a>
-  </div>
+  {% include '/navbar.html' %}
 
   <main class="inventory-container">
     <div class="inventory-table-wrapper">

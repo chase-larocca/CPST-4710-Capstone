@@ -161,7 +161,10 @@ function showToast(message, duration = 3000, type = 'success') {
             <span class="close-button" id="closeModal">&times;</span>
             <div class="modal-grid">
               <div class="thumbnail-column">
-                <img src="https://placehold.co/200x200" alt="Product Thumbnail" class="product-thumbnail">
+                <img src="/static/images/thumbnails/SKU/${item.SKU}.png" 
+                    alt="Product Thumbnail" 
+                    class="product-thumbnail" 
+                    onerror="this.src='/static/images/thumbnails/placeholder.png'">
               </div>
               <div class="fields-column">
                 <label>Item Name:</label>
