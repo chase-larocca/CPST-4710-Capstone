@@ -1,5 +1,6 @@
 
 import mysql.connector
+print(mysql.connector.__file__)
 from mysql.connector import Error
 from tqdm import tqdm
 import time
@@ -261,22 +262,16 @@ try:
                 cursor.execute(command)
                 time.sleep(0.1)
 
-
         cursor.execute(f"USE {db_name}")
         print("\nCreating stored procedures...")
 
         for proc in stored_procedures:
             try:
-                connection.cmd_query(proc)
-                connection._cmysql.next_result()  
+                cursor.execute(proc)
                 time.sleep(0.1)
             except Error as e:
                 print(f"Failed to create procedure: {e}")
-
-
-
-
-
+                
         connection.commit()
         print(f"\nSUCCESS: Database '{db_name}' setup complete with all stored procedures.")
 
