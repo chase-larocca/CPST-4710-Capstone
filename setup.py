@@ -264,8 +264,10 @@ try:
         cursor.execute(f"USE {db_name}")
         print("\nCreating stored procedures...")
         for proc in stored_procedures:
-            cursor.execute(proc)
-            time.sleep(0.1)
+            for statement in cursor.execut(proc, multi=True):
+                cursor.execute(proc)
+                time.sleep(0.1)
+                pass
 
         connection.commit()
         print(f"\nSUCCESS: Database '{db_name}' setup complete with all stored procedures.")
