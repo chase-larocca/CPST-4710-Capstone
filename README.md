@@ -31,7 +31,7 @@ pip install flask
 pip install werkzeug
 
 PREPARE FOR SETUP.PY
-Before running the setup.py file, the host machine must install an updated version of MySQL. The team tested with version 8.0.42. When installing MySQL, it is recommended to be configured with the default settings and the FULL MySQL package, including Workbench and Server. By default, you will be recommended port 3306. The team recommends this default. Remember your root username and password, which will be important later (SEE BELOW NOTES ON ROOT PASSWORD CHOICES). 
+Before running the setup.py file, the host machine must install an updated version of MySQL. The team tested with version 8.0.42. When installing MySQL, it is recommended to be configured with the default settings and the FULL MySQL package, including Workbench and Server. This link will direct the user to a MySQL install page. By default, you will be recommended port 3306. The team recommends this default. Remember your root username and password, which will be important later (SEE BELOW NOTES ON ROOT PASSWORD CHOICES). 
 
 In testing, the team used the following password as their root SQL login: "Dr3amC0ount3r$." If your root login differs from the team's, you must change the root credentials stored in the startup.py file. These properties can be found in the function "connect_to_mysql" in the connection properties starting on line 26. Update this section with your credentials if you want to change.
 
