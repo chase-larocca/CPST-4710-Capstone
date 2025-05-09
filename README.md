@@ -14,7 +14,7 @@ Libraries:
 - Flask (Web server hosting)
 - wekzeug (Password hashing library)
 - re (Searching/text patterns)
-- - tqdm
+- tqdm
 -----------------------------------------------------------------------------------------
 MySQL Configuration, Python, and setup.py:
 
