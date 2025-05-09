@@ -395,6 +395,7 @@ def update_inventory():
         cursor.close()
         connection.close()
 
+# Load the order management page
 @app.route('/order-management')
 def order_management():
     if 'user_id' not in session or session.get('role') not in ['Employee', 'Admin']:
@@ -407,8 +408,7 @@ def order_management():
         role=session.get('role')
     )
 
-
-
+# Load orders data
 @app.route('/api/admin/orders')
 def get_all_orders_for_admin():
     connection = connect_to_mysql()
@@ -434,6 +434,7 @@ def get_all_orders_for_admin():
         cursor.close()
         connection.close()
 
+# Update the order information
 @app.route('/api/admin/orders/update', methods=["POST"])
 def update_order_admin():
     data = request.get_json()
@@ -464,6 +465,7 @@ def update_order_admin():
         cursor.close()
         connection.close()
 
+# Load user management table
 @app.route('/user-management')
 def user_management():
     if 'user_id' not in session or session.get('role') != 'Admin':
@@ -478,7 +480,7 @@ def user_management():
 
 
 
-
+# Get users to populate page
 @app.route('/api/admin/users', methods=['GET'])
 def get_all_users_admin():
     connection = connect_to_mysql()
@@ -502,6 +504,7 @@ def get_all_users_admin():
         cursor.close()
         connection.close()
 
+# Update user information
 @app.route('/api/admin/users/update', methods=['POST'])
 def update_user_admin():
     data = request.get_json()
@@ -541,6 +544,7 @@ def update_user_admin():
         cursor.close()
         connection.close()
 
+# Function to add users to the users table
 @app.route('/api/admin/users/add', methods=['POST'])
 def add_user_admin():
     data = request.get_json()
@@ -684,7 +688,7 @@ def account():
 def inject_user_role():
     return dict(role=session.get('role'))
 
-
+# Get product data for table population
 @app.route("/api/products", methods=["GET"])
 def get_inventory_items():
     connection = connect_to_mysql()
@@ -742,7 +746,7 @@ def get_inventory_items():
         cursor.close()
         connection.close()
 
-
+# Get colors with current SKU prevent duplication
 @app.route('/api/colors-for-sku/<string:sku>', methods=['GET'])
 def get_colors_for_sku(sku):
     connection = connect_to_mysql()
@@ -764,6 +768,7 @@ def get_colors_for_sku(sku):
         cursor.close()
         connection.close()
 
+# Get colors from colors table
 @app.route('/api/colors', methods=['GET'])
 def get_colors():
     connection = connect_to_mysql()
@@ -782,7 +787,7 @@ def get_colors():
         cursor.close()
         connection.close()
 
-
+# Get customer's associated orders
 @app.route('/api/orders')
 def get_orders():
     if 'user_id' not in session:
@@ -873,6 +878,7 @@ def forgot_password():
         cursor.close()
         connection.close()
     
+# Debug commands for testing routes and functionality
 @app.route('/debug-alive')
 def debug_alive():
     return "This is the correct startup.py"
@@ -890,6 +896,7 @@ def debug_session():
         "role": session.get("role")
 })
 
+# Error handling for common flask server errrors
 @app.errorhandler(Exception)
 def handle_exception(e):
     # Flask handle 404s normally 
