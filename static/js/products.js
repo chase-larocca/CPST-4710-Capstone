@@ -7,7 +7,7 @@ fetch('/api/products')
 
   data.forEach(product => {
     
-    const imageUrl = productImageBaseUrl + product.SKU + ".png"; // Change extension if needed
+    const imageUrl = productImageBaseUrl + product.SKU + ".png"; 
     
     const card = document.createElement('div');
     card.classList.add('product-card');
