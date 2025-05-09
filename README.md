@@ -41,6 +41,11 @@ Once your MySQL instance is installed, the user can run setup.py. Upon running s
 
 Upon completion of the script, the user can now run the startup.py. This will start the Flask server and present the user with a local IP address in the terminal. Navigating to this link in a browser will display the website's home page. 
 
+
+If users utilize the setup.py script, they will already be granted an admin account. The default credentials should immediately be changed. These credentials are admin@sb.com with a default password of admin.
+
+From this point, the user can utilize the site as needed.
+
 KNOWN BUGS: Some MySQL installations might have a mismatch in authentication plugins. If upon running the setup.py file, you receive a message like "FAILURE ERROR: Authentication plugin 'caching_sha2_password' is not supported," follow these steps:
 
   1) In the terminal, run cd "C:\Program Files\MySQL\MySQL Server 8.0\bin" unless your MySQL is in a different location.
@@ -52,8 +57,5 @@ KNOWN BUGS: Some MySQL installations might have a mismatch in authentication plu
   4) In a separate terminal session open as admin run the commands:
      - net stop mysql80
      - net start mysql80
-
-If users utilize the setup.py script, they will already be granted an admin account. The default credentials should immediately be changed. These credentials are admin@sb.com with an admin password. 
-
-From this point, the user can utilize the site as needed. 
+ 
 
