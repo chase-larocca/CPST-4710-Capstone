@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Order Status</title>
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/GlobalStyles.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/OrderStatusStyles.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/HeaderStyles.css') }}">
-
+  <link rel="stylesheet" href="/static/styles/GlobalStyles.css">
+  <link rel="stylesheet" href="/static/styles/HeaderStyles.css">
+  <link rel="stylesheet" href="/static/styles/OrderStatusStyles.css">
+  
   <script src="{{ url_for('static', filename='js/orderstatus.js') }}" defer></script>
 
 
@@ -22,6 +22,7 @@
     <h1 class="page-title">Order Status</h1>
   </div>
 
+  <!--Implement navbar styles-->
   {% include '/navbar.html' %}
 
   <div class="main-content">

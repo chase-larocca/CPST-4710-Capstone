@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>Order Management</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/InventoryManagementStyles.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles/OrderManagementStyles.css') }}">
+
+  <link rel="stylesheet" href="/static/styles/InventoryManagementStyles.css">
+  <link rel="stylesheet" href="/static/styles/OrderManagementStyles.css">
+  
 </head>
 <body>
 
@@ -13,6 +15,7 @@
     <h1 class="page-title">South Balance Order Management</h1>
   </div>
 
+  <!--Implement navbar styles-->
   {% include '/navbar.html' %}
 
   <main class="inventory-container">
