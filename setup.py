@@ -261,17 +261,19 @@ try:
             if command.strip():
                 cursor.execute(command)
                 time.sleep(0.1)
-
         cursor.execute(f"USE {db_name}")
-        print("\nCreating stored procedures...")
 
+        print("\nCreating stored procedures...")
         for proc in stored_procedures:
             try:
-                cursor.execute(proc)
+                drop_statement, create_statement = proc.strip().split(";", 1)
+                cursor.execute(drop_statement + ";")
+                cursor.execute(create_statement + ";")
                 time.sleep(0.1)
             except Error as e:
                 print(f"Failed to create procedure: {e}")
-                
+
+
         connection.commit()
         print(f"\nSUCCESS: Database '{db_name}' setup complete with all stored procedures.")
 
