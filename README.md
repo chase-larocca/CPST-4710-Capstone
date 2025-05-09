@@ -1,4 +1,4 @@
-This file is designed to help deploy the South Balance ecommerce webpage. 
+This file is designed to help deploy the South Balance e-commerce webpage. 
 -----------------------------------------------------------------------------------------
 The website uses several different systems in conjunction with each other. All of these systems are required to ensure the website's full functionality. 
 
@@ -49,7 +49,7 @@ KNOWN BUGS: Some MySQL installations might have a mismatch in authentication plu
      - ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Dr3amC0ount3r$'; (REPLACE WITH YOUR ROOT PASSWORD)
      - FLUSH PRIVILEGES;
      - EXIT;
-  4) In a seperate terminal session open as admin run the commands:
+  4) In a separate terminal session open as admin run the commands:
      - net stop mysql80
      - net start mysql80
 
@@ -57,17 +57,3 @@ If users utilize the setup.py script, they will already be granted an admin acco
 
 From this point, the user can utilize the site as needed. 
 
-
-
-host="localhost"
-user="root"
-password="Dr3amC0ount3r$"
-database="TTOps"
-
-No users will be created by default. The team recommends running the following command within SQL to create your initial admin profile. The password below is hashed, but in plaintext, it would be "yourpassword."
-
-INSERT INTO Users (FirstName, LastName, Email, Username, PasswordHash, Role)
-VALUES ('Admin', 'User', 'admin@sb.com', 'admin', 'pbkdf2:sha256:260000$jWHKCJnozAmkU2fT$c4547fb7360cc83d344e60e86130022a60f26cd631ed32a892e5632ad1de8aa5', 'Admin');
------------------------------------------------------------------------------------------
-
-Once the database has been created, the user can run the startup.py file to launch the Flask server and begin utilizing the website. The IP address associated with your Flask server will be visible in the terminal from which you executed the startup.py
